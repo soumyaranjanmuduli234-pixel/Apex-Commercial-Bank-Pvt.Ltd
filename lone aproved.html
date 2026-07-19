@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approvals Desk - Manager Only</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Credit Authorization</span></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="manager.html"><button style="background: transparent; border: 1px solid #475569; color: white;">Back Dashboard</button></a>
+            <button class="btn-danger" onclick="Session.logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-bottom: 0.5rem;">Pending Loan Applications Desk</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Authorized Branch Manager View. Review requests and authorize capital injection simulations.</p>
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer A/C</th>
+                        <th>Loan Details</th>
+                        <th>Requested Amount</th>
+                        <th>Actions Panel</th>
+                    </tr>
+                </thead>
+                <tbody id="managerLoanTable">
+                    <!-- Pending entries append here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Access Override Guard: Managers only
+        const staff = Session.getUser();
+        if(!staff || staff.role !== 'manager') {
+            alert('⚠️ Access Violated: Manager role clearance is strictly required!');
+            window.location.href = 'employeslogin.html';
+        }
+
+        function loadPendingLoans() {
+            const tbody = document.getElementById('managerLoanTable');
+            tbody.innerHTML = '';
+            
+            let loans = getDB('loans') || [];
+            // Filter only pending items
+            let pendingItems = loans.filter(l => l.status === 'Pending');
+
+            if(pendingItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic; padding:2rem;">No pending loan applications waiting for evaluation.</td></tr>`;
+                return;
+            }
+
+            // Loop to render actions buttons dynamically mapping with core array index
+            loans.forEach((loan, originalIndex) => {
+                if(loan.status === 'Pending') {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:var(--accent);"># ${loan.accNum}</td>
+                            <td>${loan.type}</td>
+                            <td style="font-weight:600; color:var(--primary);">₹${parseFloat(loan.amount).toLocaleString('en-IN')}</td>
+                            <td>
+                                <button onclick="processLoan(${originalIndex}, 'Approved')" style="background-color:var(--success); padding:6px 12px; font-size:0.85rem; margin-right:5px;">Approve & Credit</button>
+                                <button onclick="processLoan(${originalIndex}, 'Rejected')" style="background-color:var(--danger); padding:6px 12px; font-size:0.85rem;">Reject</button>
+                            </td>
+                        </tr>`;
+                }
+            });
+        }
+
+        // Action Trigger Module
+        window.processLoan = function(index, decision) {
+            let loans = getDB('loans') || [];
+            
+            if (!loans[index]) return alert('Record mismatch error.');
+
+            loans[index].status = decision;
+            
+            // Core Action Logic: If manager clicks Approved, credit simulated cash to the customer
+            if(decision === 'Approved') {
+                let targetAccount = loans[index].accNum;
+                let creditValue = loans[index].amount;
+                
+                let transferResult = updateFakeBalance(targetAccount, creditValue, 'deposit');
+                
+                if(!transferResult.success) {
+                    alert(`Error crediting funds: ${transferResult.msg}`);
+                    return;
+                }
+            }
+            
+            // Save state back to localStorage database
+            setDB('loans', loans);
+            alert(`👍 Action Logged: Loan request has been successfully marked as [ ${decision} ]!`);
+            loadPendingLoans();
+        }
+
+        // Run on mount
+        loadPendingLoans();
+    </script>
+</body>
+</html>

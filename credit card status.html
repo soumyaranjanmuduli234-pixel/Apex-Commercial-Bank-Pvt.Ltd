@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Status - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Card Management</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="ceaditecardapply.html">Apply New Card</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Your Active Credit Cards</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Track configurations and status records of issued virtual corporate credit instruments.</p>
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date of Issue</th>
+                        <th>Card Type</th>
+                        <th>Simulated Limit</th>
+                        <th>Deployment Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ccStatusTable">
+                    <!-- Dynamic Rows Insertion -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Customer authentication required.');
+            window.location.href = 'login.html';
+        }
+
+        function renderCreditCards() {
+            const tbody = document.getElementById('ccStatusTable');
+            tbody.innerHTML = '';
+            
+            let allCards = getDB('cards') || [];
+            // Filter strictly for Credit Cards belonging to this account number
+            let userCC = allCards.filter(c => c.accNum === session.accountNo && c.cardClass === 'Credit Card');
+
+            if(userCC.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; font-style:italic; padding:2rem;">No simulated credit cards active on this profile.</td></tr>`;
+                return;
+            }
+
+            userCC.reverse().forEach(card => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${card.timestamp || 'Recent'}</td>
+                        <td style="font-weight:600; color:var(--primary);">${card.variant}</td>
+                        <td>₹${parseFloat(card.limit).toLocaleString('en-IN')}</td>
+                        <td><span class="badge badge-approved">${card.status}</span></td>
+                        <td><a href="creditcardbalancecheck.html"><button style="padding:4px 10px; font-size:0.85rem;">Check Balance</button></a></td>
+                    </tr>`;
+            });
+        }
+
+        renderCreditCards();
+    </script>
+</body>
+</html>

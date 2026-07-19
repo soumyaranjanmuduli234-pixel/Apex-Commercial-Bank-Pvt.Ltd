@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Debit Card - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Debit Cards</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="debirtcardstatus.html">Card Status</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 550px;">
+        <h2>Debit Card Application</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Link a premium virtual debit card variant directly to your dynamic account engine balance.</p>
+        
+        <form id="debitCardForm">
+            <div class="form-group">
+                <label>Linked Account Number</label>
+                <input type="text" id="dcAcc" readonly style="background: #f1f5f9; font-weight: bold; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Select Card Network Variant</label>
+                <select id="dcType">
+                    <option value="Visa Classic Dynamic">Apex Visa Classic (Daily Limit: ₹50,000)</option>
+                    <option value="Mastercard World Platinum">Apex Mastercard World Premium (Daily Limit: ₹2,00,000)</option>
+                    <option value="RuPay Select Secure">Apex RuPay Select Sovereign (Daily Limit: ₹1,00,000)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Choose Custom 4-Digit Security PIN</label>
+                <input type="password" id="dcPin" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 1234" required>
+            </div>
+            <button type="submit" style="width: 100%; background-color: #8b5cf6;">Instantly Issue Debit Card</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const user = Session.getUser();
+        if (!user || user.role !== 'customer') {
+            alert('Authorized Customer session required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('dcAcc').value = user.accountNo;
+        }
+
+        document.getElementById('debitCardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const variant = document.getElementById('dcType').value;
+            let allCards = getDB('cards') || [];
+
+            // Deploy dynamic virtual debit card metadata architecture
+            allCards.push({
+                accNum: user.accountNo,
+                cardClass: 'Debit Card',
+                variant: variant,
+                status: 'Approved', // Auto-cleared under simulation parameters
+                timestamp: new Date().toLocaleString()
+            });
+
+            setDB('cards', allCards);
+            alert(`🎉 Success: Your Apex ${variant} has been provisioned and linked to account: ${user.accountNo}!`);
+            window.location.href = 'debirtcardstatus.html';
+        });
+    </script>
+</body>
+</html>

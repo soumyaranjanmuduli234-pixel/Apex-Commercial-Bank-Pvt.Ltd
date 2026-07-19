@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debit Balance Checker - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Terminal Monitor</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Main Hub</a>
+            <a href="debirtcardstatus.html">My Debit Cards</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 600px;">
+        <h2>Virtual Debit Terminal Balance</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Real-time balance mapped out from your integrated core asset repository.</p>
+        
+        <div id="debitViewContainer">
+            <!-- Appended dynamic content framework -->
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="accountbalancecheck.html" style="color: var(--accent); font-weight: 600; text-decoration: none;">← Back to Customer Dashboard</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Customer authentication required.');
+            window.location.href = 'login.html';
+        }
+
+        function loadDebitBalances() {
+            const container = document.getElementById('debitViewContainer');
+            container.innerHTML = '';
+            
+            let allCards = getDB('cards') || [];
+            let userDC = allCards.filter(c => c.accNum === session.accountNo && c.cardClass === 'Debit Card');
+            
+            // Fetch real balance from linked primary account table
+            let accounts = getDB('bank_accounts') || {};
+            let accountInfo = accounts[session.accountNo];
+
+            if(userDC.length === 0 || !accountInfo) {
+                container.innerHTML = `<div class="card" style="text-align:center; color:#64748b;">No active linked debit configurations found.</div>`;
+                return;
+            }
+
+            // Display latest issued card representation block
+            let card = userDC[userDC.length - 1]; 
+            container.innerHTML = `
+                <div class="card" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 2.2rem; position: relative; border-radius: 12px; box-shadow: 0 5px 15px rgba(37,99,235,0.25);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; color:#93c5fd;">${card.variant}</span>
+                        <span style="font-style:italic; font-weight:bold; font-size:1.1rem;">Apex Pay</span>
+                    </div>
+                    <div style="font-size: 1.3rem; letter-spacing: 3px; font-family: monospace; margin-bottom: 2rem;">5241 •••• •••• ${session.accountNo.slice(-4) || '0000'}</div>
+                    
+                    <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">
+                        <span style="font-size: 0.75rem; color: #93c5fd; display: block; text-transform:uppercase;">Realtime Linked Account Fake Balance</span>
+                        <span style="font-size: 2rem; font-weight: bold; color: #ffffff;">An ₹${parseFloat(accountInfo.balance).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                    </div>
+                </div>`;
+        }
+
+        loadDebitBalances();
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Bank Ltd.</span></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="login.html">Customer Login</a>
+            <a href="employeslogin.html">Staff Portal</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 500px; margin-top: 3rem;">
+        <h2>Create Digital Account</h2>
+        <form id="customerRegisterForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="custName" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email ID</label>
+                <input type="email" id="custEmail" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Create Account Number (Numeric Only)</label>
+                <input type="text" id="custAcc" placeholder="e.g. 100200300" pattern="[0-9]+" title="Please enter numbers only" required>
+            </div>
+            <div class="form-group">
+                <label>Create Login Password</label>
+                <input type="password" id="custPass" placeholder="••••••••" minlength="4" required>
+            </div>
+            <button type="submit" style="width: 100%; margin-top: 0.5rem; background-color: var(--success);">Register & Open Account</button>
+        </form>
+
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem; color: #64748b;">
+            Already have an account? <a href="login.html" style="color: var(--accent); font-weight: 600; text-decoration: none;">Login Now</a>
+        </p>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('customerRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const email = document.getElementById('custEmail').value.trim();
+            const accNum = document.getElementById('custAcc').value.trim();
+            const password = document.getElementById('custPass').value;
+
+            let accounts = getDB('bank_accounts');
+
+            // Validate duplicate account number
+            if (accounts[accNum]) {
+                alert('⚠️ This Account Number is already registered! Choose a unique number.');
+                return;
+            }
+
+            // Save new customer data with default Fake Balance
+            accounts[accNum] = {
+                name: name,
+                email: email,
+                password: password,
+                balance: 5000.00 // Fake bonus starting balance
+            };
+
+            setDB('bank_accounts', accounts);
+            alert(`Account created successfully!\nYour Account Number is: ${accNum}\nStarting Fake Balance: ₹5,000`);
+            window.location.href = 'login.html';
+        });
+    </script>
+
+</body>
+</html>

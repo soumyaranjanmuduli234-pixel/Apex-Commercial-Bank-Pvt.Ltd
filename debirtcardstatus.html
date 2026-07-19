@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debit Card Inventory - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Card Inventory</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="debirtcardapply.html">Issue New Card</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Active Virtual Debit Cards</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Overview ledger of virtual debit processing lines assigned to your profile numbers.</p>
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date of Generation</th>
+                        <th>Card Network</th>
+                        <th>Linked Account</th>
+                        <th>Operational State</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="dcStatusTable">
+                    <!-- Dynamic Insertion Matrix -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Customer authentication required.');
+            window.location.href = 'login.html';
+        }
+
+        function renderDebitCards() {
+            const tbody = document.getElementById('dcStatusTable');
+            tbody.innerHTML = '';
+            
+            let allCards = getDB('cards') || [];
+            // Query logs targeting strictly Debit Cards matching user account
+            let userDC = allCards.filter(c => c.accNum === session.accountNo && c.cardClass === 'Debit Card');
+
+            if(userDC.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; font-style:italic; padding:2rem;">No debit instruments active on this account profile.</td></tr>`;
+                return;
+            }
+
+            userDC.reverse().forEach(card => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${card.timestamp || 'Recent'}</td>
+                        <td style="font-weight:600; color:var(--primary);">${card.variant}</td>
+                        <td style="font-family:monospace; font-weight:bold;"># ${card.accNum}</td>
+                        <td><span class="badge badge-approved" style="background:#dcfce7; color:#15803d;">Active Line</span></td>
+                        <td><a href="debirtcardbalancecheck.html"><button style="padding:4px 10px; font-size:0.85rem; background-color:#475569;">Check Balance</button></a></td>
+                    </tr>`;
+            });
+        }
+
+        renderDebitCards();
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Withdrawal - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Atm Desk</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 480px; margin-top: 4rem;">
+        <h2>Virtual Cash Withdrawal</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Simulate real-time instant cash withdrawals from your available virtual account balance.</p>
+        
+        <form id="withdrawSimulatorForm">
+            <div class="form-group">
+                <label>Confirm Account Number</label>
+                <input type="text" id="wdAccNum" readonly style="background-color: #f1f5f9; cursor: not-allowed; font-weight: bold;">
+            </div>
+            <div class="form-group">
+                <label>Withdrawal Amount (Fake INR)</label>
+                <input type="number" id="wdAmount" min="100" placeholder="Enter Amount" required>
+            </div>
+            <button type="submit" style="width: 100%; background-color: var(--danger);">Complete Virtual Withdrawal</button>
+        </form>
+        
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="accountbalancecheck.html" style="color: var(--accent); font-weight: 600; text-decoration: none;">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Authorized Customer access required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('wdAccNum').value = session.accountNo;
+        }
+
+        document.getElementById('withdrawSimulatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const acc = session.accountNo;
+            const amount = document.getElementById('wdAmount').value;
+
+            // Trigger withdrawal operation via engine
+            let status = updateFakeBalance(acc, amount, 'withdraw');
+
+            if (status.success) {
+                alert(`💸 Withdrawal Successful!\nAmount Debited: ₹${amount}\nRemaining Fake Balance: ₹${status.balance}`);
+                window.location.href = 'accountbalancecheck.html';
+            } else {
+                alert(`❌ Transaction Declined: ${status.msg}`);
+            }
+        });
+    </script>
+</body>
+</html>

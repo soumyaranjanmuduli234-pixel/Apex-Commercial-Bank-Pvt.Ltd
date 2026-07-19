@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Panel - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Admin Console</span></div>
+        <button class="btn-danger" onclick="Session.logout()">Logout</button>
+    </header>
+
+    <div class="container">
+        <div style="margin-bottom: 2rem;">
+            <h2>Welcome Back, Master Admin (SOUMYA)</h2>
+            <p style="color: #64748b;">System Administrator Control Dashboard. Manage internal high-level corporate authorizations.</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Left Card: Form to add Managers -->
+            <div class="card" style="background: white;">
+                <h3 style="color: var(--accent); margin-bottom: 1.25rem; font-size: 1.25rem;">Register Branch Manager</h3>
+                <form id="createManagerForm">
+                    <div class="form-group">
+                        <label>Assign Manager ID / Username</label>
+                        <input type="text" id="mngUser" placeholder="e.g. MANAGER_BHUBANESWAR" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Set Secure Password</label>
+                        <input type="password" id="mngPass" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" style="width: 100%; margin-top: 0.5rem;">Create Manager Profile</button>
+                </form>
+            </div>
+            
+            <!-- Right Card: Active Managers list -->
+            <div class="card" style="background: white;">
+                <h3 style="color: var(--primary); margin-bottom: 1.25rem; font-size: 1.25rem;">Authorized Bank Managers</h3>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <ul id="managerList" style="list-style: none; padding: 0;">
+                        <!-- Content loaded via JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Security Gate: Verify if Admin session is active
+        const sessionData = Session.getUser();
+        if(!sessionData || sessionData.role !== 'admin') {
+            alert('⚠️ Unauthorized Access! Redirecting to Staff Login Portal.');
+            window.location.href = 'employeslogin.html';
+        }
+
+        // Render registered managers from LocalStorage database
+        function loadManagers() {
+            const listContainer = document.getElementById('managerList');
+            listContainer.innerHTML = '';
+            let managers = getDB('managers') || [];
+            
+            if(managers.length === 0) {
+                listContainer.innerHTML = '<li style="color:#94a3b8; font-style:italic; padding: 10px; text-align:center;">No active branch managers found.</li>';
+                return;
+            }
+
+            managers.forEach(mgr => {
+                listContainer.innerHTML += `
+                    <li style="background:#f8fafc; padding:12px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span style="display:block; font-size:0.95rem; font-weight:600; color:var(--primary);">💼 ${mgr.id}</span>
+                            <span style="font-size:0.8rem; color:#94a3b8;">Role: Branch Manager</span>
+                        </div>
+                        <span class="badge badge-approved" style="font-size:0.75rem;">Active Status</span>
+                    </li>`;
+            });
+        }
+
+        // Handle Manager Creation
+        document.getElementById('createManagerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let newId = document.getElementById('mngUser').value.trim();
+            let newPass = document.getElementById('mngPass').value;
+            
+            let currentManagers = getDB('managers') || [];
+            
+            // Check for duplicate username
+            if(currentManagers.some(mgr => mgr.id.toLowerCase() === newId.toLowerCase())) {
+                alert('⚠️ Verification Failed: This Manager ID already exists in the system.');
+                return;
+            }
+            
+            // Push into array database
+            currentManagers.push({ id: newId, pass: newPass });
+            setDB('managers', currentManagers);
+            
+            alert(`🎉 Success: Manager Account [ ${newId} ] created successfully!`);
+            this.reset();
+            loadManagers();
+        });
+
+        // Initial Data Fetch
+        loadManagers();
+    </script>
+</body>
+</html>

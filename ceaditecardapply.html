@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Credit Card - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Card Services</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="credit card status.html">Card Status</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 550px;">
+        <h2>Credit Card Application</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Select your preferred premium card variant to simulate your shopping credit lines.</p>
+        
+        <form id="creditCardForm">
+            <div class="form-group">
+                <label>Applicant Account Number</label>
+                <input type="text" id="ccAcc" readonly style="background: #f1f5f9; font-weight: bold; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Select Card Type</label>
+                <select id="ccType">
+                    <option value="Platinum Card (Limit: ₹1,00,000)">Apex Platinum (Simulated Limit: ₹1,00,000)</option>
+                    <option value="Signature Card (Limit: ₹3,00,000)">Apex Signature (Simulated Limit: ₹3,00,000)</option>
+                    <option value="Infinite Metal Card (Limit: ₹5,00,000)">Apex Infinite Metal (Simulated Limit: ₹5,00,000)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Monthly Simulated Income (INR)</label>
+                <input type="number" id="ccIncome" placeholder="e.g. 75000" required>
+            </div>
+            <button type="submit" style="width: 100%;">Submit Card Request</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const user = Session.getUser();
+        if (!user || user.role !== 'customer') {
+            alert('Authorized Customer session required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('ccAcc').value = user.accountNo;
+        }
+
+        document.getElementById('creditCardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const cardType = document.getElementById('ccType').value;
+            
+            // Set dynamic limit based on card type selection
+            let cardLimit = 100000;
+            if (cardType.includes('3,00,000')) cardLimit = 300000;
+            if (cardType.includes('5,00,000')) cardLimit = 500000;
+
+            let allCards = getDB('cards') || [];
+
+            // Save new credit card request log
+            allCards.push({
+                accNum: user.accountNo,
+                cardClass: 'Credit Card',
+                variant: cardType.split(' (')[0],
+                limit: cardLimit,
+                balance: cardLimit, // Initially full limit is available
+                status: 'Approved', // Auto-approved for flawless simulation experience
+                timestamp: new Date().toLocaleString()
+            });
+
+            setDB('cards', allCards);
+            alert(`🎉 Congratulations! Your application for ${cardType.split(' (')[0]} has been instantly APPROVED under simulation protocols.`);
+            window.location.href = 'credit card status.html';
+        });
+    </script>
+</body>
+</html>

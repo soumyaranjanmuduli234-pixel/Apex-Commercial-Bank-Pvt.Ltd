@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration - Manager Only</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Staff Management</span></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="manager.html"><button style="background: transparent; border: 1px solid #475569; color: white;">Back Dashboard</button></a>
+            <button class="btn-danger" onclick="Session.logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 550px;">
+        <h2 style="border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+            Enroll Bank Employee <span style="font-size: 0.8rem; color: var(--danger); font-weight: bold; border: 1px solid var(--danger); padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 10px;">MANAGER PRIVILEGE</span>
+        </h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.95rem;">Fill down corporate employee profiles to activate their sub-desk operations access.</p>
+        
+        <form id="regEmployeeForm">
+            <div class="form-group">
+                <label>Employee Full Name</label>
+                <input type="text" id="empName" placeholder="Enter Full Name" required>
+            </div>
+            <div class="form-group">
+                <label>Create Employee ID / Username</label>
+                <input type="text" id="empId" placeholder="e.g. EMP_BHUB_04" required>
+            </div>
+            <div class="form-group">
+                <label>Set Operational Password</label>
+                <input type="password" id="empPass" placeholder="••••••••" minlength="4" required>
+            </div>
+            <button type="submit" style="width: 100%; background-color: #8b5cf6;">Register Employee & Activate ID</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Manager Guard
+        const userSession = Session.getUser();
+        if(!userSession || userSession.role !== 'manager') {
+            alert('❌ Access Denied! This operation is restricted strictly to Branch Managers.');
+            window.location.href = 'employeslogin.html';
+        }
+
+        document.getElementById('regEmployeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let name = document.getElementById('empName').value.trim();
+            let id = document.getElementById('empId').value.trim();
+            let pass = document.getElementById('empPass').value;
+
+            let currentEmployees = getDB('employees') || [];
+
+            // Prevent duplicate employee username
+            if(currentEmployees.some(emp => emp.id.toLowerCase() === id.toLowerCase())) {
+                alert('⚠️ Duplicate ID: This Employee Username already exists.');
+                return;
+            }
+
+            // Register Employee into mock database
+            currentEmployees.push({ name, id, pass });
+            setDB('employees', currentEmployees);
+
+            alert(`🎉 Success: Employee [ ${name} ] enrolled under ID: ${id}`);
+            this.reset();
+        });
+    </script>
+</body>
+</html>

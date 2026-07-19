@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheque Book Request - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Cheque Services</span></div>
+        <nav><a href="accountbalancecheck.html">Dashboard</a></nav>
+    </header>
+
+    <div class="container" style="max-width: 500px; margin-top: 4rem;">
+        <h2>Request Cheque Book</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Order custom simulated high-security transaction cheque layouts for clearing overrides.</p>
+        
+        <form id="chequeBookForm">
+            <div class="form-group">
+                <label>Applicant Account Number</label>
+                <input type="text" id="cbAcc" readonly style="background: #f1f5f9; font-weight: bold; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Select Cheque Book Size</label>
+                <select id="cbSize">
+                    <option value="25 Leaves">Standard Booklet - 25 Leaves</option>
+                    <option value="50 Leaves">Commercial Booklet - 50 Leaves</option>
+                    <option value="100 Leaves">High-Volume Corporate Booklet - 100 Leaves</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Preferred Delivery Mode Simulation</label>
+                <select id="cbDelivery">
+                    <option value="Secure Speed Post">Secure Corporate Dispatch Courier</option>
+                    <option value="Branch Pickup">Onsite Bhubaneswar Branch Counter Pickup</option>
+                </select>
+            </div>
+            <button type="submit" style="width: 100%; background-color: #ea580c;">Submit Cheque Book Request</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const user = Session.getUser();
+        if (!user || user.role !== 'customer') {
+            alert('Authorized Customer session validation required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('cbAcc').value = user.accountNo;
+        }
+
+        document.getElementById('chequeBookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const size = document.getElementById('cbSize').value;
+            const delivery = document.getElementById('cbDelivery').value;
+
+            // Direct execution confirmation under virtual server mode
+            alert(`🎉 Request Registered Successfully!\nBooklet Size: ${size}\nDelivery Allocation: ${delivery}\nYour simulated tracking number will be dispatched shortly via automated SMS notifications.`);
+            window.location.href = 'accountbalancecheck.html';
+        });
+    </script>
+</body>
+</html>

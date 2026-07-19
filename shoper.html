@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers & Shopping Portal - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .item-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .price-tag {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0 1rem;
+        }
+        .offer-badge {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Offers Portal</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="shoper.html" class="active">Shopping Deals</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">
+            <h2>Exclusive Card & Account Offers</h2>
+            <div style="font-weight: bold; color: var(--accent);" id="userDisplay">Active Account: None</div>
+        </div>
+        
+        <p style="color: #64748b; margin-bottom: 2rem;">Use your logged-in Apex Commercial Bank account to unlock these deals instantly using your simulated balance.</p>
+
+        <div class="shop-grid">
+            <!-- Product 1 -->
+            <div class="item-card">
+                <div>
+                    <span class="offer-badge">10% CashBack via Apex Cards</span>
+                    <h3 style="font-size: 1.2rem; color: var(--primary);">Premium Wireless Earbuds</h3>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0.5rem;">Noise-canceling ultra bass sound with 40-hour battery backup simulation.</p>
+                </div>
+                <div>
+                    <div class="price-tag">₹2,999</div>
+                    <button style="width: 100%;" onclick="buyItem('Premium Wireless Earbuds', 2999)">Buy with Apex Pay</button>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="item-card">
+                <div>
+                    <span class="offer-badge">Instant Discount</span>
+                    <h3 style="font-size: 1.2rem; color: var(--primary);">Smart Fitness Watch Pro</h3>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0.5rem;">AMOLED display, heart rate tracking simulator, and water-resistant casing.</p>
+                </div>
+                <div>
+                    <div class="price-tag">₹4,499</div>
+                    <button style="width: 100%;" onclick="buyItem('Smart Fitness Watch Pro', 4499)">Buy with Apex Pay</button>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="item-card">
+                <div>
+                    <span class="offer-badge">Limited Deal</span>
+                    <h3 style="font-size: 1.2rem; color: var(--primary);">Apex Metal Premium Wallet</h3>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-top: 0.5rem;">RFID blocking real-leather minimalist wallet designed exclusively for our members.</p>
+                </div>
+                <div>
+                    <div class="price-tag">₹999</div>
+                    <button style="width: 100%;" onclick="buyItem('Apex Metal Premium Wallet', 999)">Buy with Apex Pay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Check session
+        const currentUser = Session.getUser();
+        if (!currentUser || currentUser.role !== 'customer') {
+            alert('Please login as a Customer first to access the Shopping & Offers Portal.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userDisplay').innerText = `Active A/C: ${currentUser.accountNo}`;
+        }
+
+        function buyItem(itemName, price) {
+            const accNum = currentUser.accountNo;
+            
+            // Deduct money via central script function
+            let result = updateFakeBalance(accNum, price, 'withdraw');
+            
+            if (result.success) {
+                alert(`🎉 Order Placed Successfully!\nItem: ${itemName}\nAmount Deducted: ₹${price} (Fake Money)\nRemaining Fake Balance: ₹${result.balance}`);
+            } else {
+                alert(`❌ Transaction Failed: ${result.msg}`);
+            }
+        }
+    </script>
+
+</body>
+</html>

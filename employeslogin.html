@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Portal - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Staff Portal</span></div>
+        <nav><a href="index.html">Main Site Home</a></nav>
+    </header>
+
+    <div class="container" style="max-width: 480px; margin-top: 4rem;">
+        <h2>Internal Portal Sign-In</h2>
+        <form id="staffLoginForm">
+            <div class="form-group">
+                <label>System Role Access</label>
+                <select id="staffRole">
+                    <option value="admin">System Admin</option>
+                    <option value="manager">Bank Manager</option>
+                    <option value="employee">Bank Employee</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Username / Staff ID</label>
+                <input type="text" id="staffUser" placeholder="Enter user id" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="staffPass" placeholder="••••••••" required>
+            </div>
+            <button type="submit" style="width: 100%; margin-top: 0.5rem;">Authorize Access</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('staffLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const role = document.getElementById('staffRole').value;
+            const user = document.getElementById('staffUser').value.trim();
+            const pass = document.getElementById('staffPass').value;
+
+            if (role === 'admin') {
+                if (user === 'SOUMYA' && pass === 'Soumya@7890') {
+                    Session.setUser(user, 'admin');
+                    window.location.href = 'admin.html';
+                } else {
+                    alert('⚠️ Access Denied: Invalid Admin Credentials!');
+                }
+            } 
+            else if (role === 'manager') {
+                let managers = getDB('managers') || [];
+                let found = managers.find(m => m.id === user && m.pass === pass);
+                if (found) {
+                    Session.setUser(user, 'manager');
+                    window.location.href = 'manager.html';
+                } else { 
+                    alert('⚠️ Access Denied: Manager credentials incorrect!'); 
+                }
+            }
+            else if (role === 'employee') {
+                let employees = getDB('employees') || [];
+                let found = employees.find(emp => emp.id === user && emp.pass === pass);
+                if (found) {
+                    Session.setUser(user, 'employee');
+                    window.location.href = 'newaccountoppen.html';
+                } else { 
+                    alert('⚠️ Access Denied: Employee credentials incorrect!'); 
+                }
+            }
+        });
+    </script>
+</body>
+</html>

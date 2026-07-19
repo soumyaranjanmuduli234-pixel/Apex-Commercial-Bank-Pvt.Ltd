@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Portal - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Loan Division</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="lonestatus.html">Track Loan Status</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div style="margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+            <h2>Apex Retail Loan Options</h2>
+            <p style="color: #64748b;">Select a customized loan simulator package designed around your dynamic financial growth.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Option 1: Home Loan -->
+            <div class="card" style="background: white; border-left: 4px solid var(--accent);">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Home Loan Simulator</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem;">Simulate real-estate funding opportunities with premium lower markup interest rates.</p>
+                <a href="homeloneapply.html"><button style="width: 100%;">Apply for Home Loan</button></a>
+            </div>
+
+            <!-- Option 2: Car Loan -->
+            <div class="card" style="background: white; border-left: 4px solid #ea580c;">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Automobile/Car Loan</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem;">Finance your vehicle dream immediately via instant automated evaluation matrix.</p>
+                <a href="carloneapply.html"><button style="width: 100%; background-color: #ea580c;">Apply for Car Loan</button></a>
+            </div>
+
+            <!-- Option 3: Education/Study Loan -->
+            <div class="card" style="background: white; border-left: 4px solid #8b5cf6;">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Higher Education/Study Loan</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem;">Fund academic achievements directly using quick manager clearance structures.</p>
+                <a href="stydyloneapply.html"><button style="width: 100%; background-color: #8b5cf6;">Apply for Study Loan</button></a>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="accountbalancecheck.html" style="color: var(--accent); font-weight: 600; text-decoration: none;">← Back to Main Dashboard</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Session Guard
+        if (!Session.getUser() || Session.getUser().role !== 'customer') {
+            alert('Customer login authentication required.');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

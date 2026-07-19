@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Commercial Bank Ltd. - Next-Gen Banking</title>
+    <!-- Mapped seamlessly with global application design stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Modern Glassmorphic Dashboard Enhancements for Landing Interface */
+        .hero-wrapper {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2563eb 100%);
+            padding: 5rem 2.5rem;
+            border-radius: var(--radius-lg);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .hero-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 60%);
+            animation: pulseBg 12s infinite alternate linear;
+            pointer-events: none;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(5%, 10%) rotate(45deg); }
+        }
+
+        .hero-wrapper h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-wrapper h1 span {
+            background: linear-gradient(90deg, #60a5fa, #a7f3d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-wrapper p {
+            color: #cbd5e1;
+            font-size: 1.3rem;
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .glass-btn-container {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-glass-primary {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 0.9rem 2rem;
+            font-size: 1.05rem;
+        }
+
+        .btn-glass-primary:hover {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-glass-secondary {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 0.9rem 2rem;
+            font-size: 1.05rem;
+        }
+
+        .btn-glass-secondary:hover {
+            border-color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .simulation-banner {
+            background: rgba(239, 68, 68, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2.5rem;
+            font-weight: 600;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Live Matrix Metrics Card Setup */
+        .metrics-ticker {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            margin-top: -1.5rem;
+            position: relative;
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .ticker-node {
+            text-align: center;
+        }
+
+        .ticker-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+
+        .ticker-lbl {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Feature section enhancements */
+        .feature-card-highlight {
+            border-radius: var(--radius-md);
+            padding: 2.2rem;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .feature-icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header>
+        <div class="logo">Apex Commercial <span>Bank Ltd.</span></div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="login.html">Customer Login</a>
+            <a href="employeslogin.html">Staff Portal</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </header>
+
+    <div class="container" style="box-shadow: none; background: transparent; padding: 0; margin-top: 2rem;">
+        
+        <!-- Upgraded Hero Showcase Box -->
+        <div class="hero-wrapper">
+            <h1>Tomorrow's Banking,<br><span>Simulated Today.</span></h1>
+            <p>Experience ultra high-speed virtual transactions, P2P money transfers, automated loan algorithms, and dynamic PDF passbook statement compilation.</p>
+            
+            <div class="glass-btn-container">
+                <a href="login.html"><button class="btn-glass-primary">Access Online Banking</button></a>
+                <a href="resiter.html"><button class="btn-glass-secondary">Open Simulation Account</button></a>
+            </div>
+        </div>
+
+        <!-- Real-Time Metrics Analytics Ticker Bar -->
+        <div class="metrics-ticker">
+            <div class="ticker-node">
+                <span class="ticker-val" id="metricUsers">0</span>
+                <span class="ticker-lbl">Simulated Accounts</span>
+            </div>
+            <div class="ticker-node" style="border-left: 1px solid var(--border-color); padding-left: 2rem;">
+                <span class="ticker-val" style="color: var(--success);" id="metricVolume">₹0</span>
+                <span class="ticker-lbl">Simulated Volume</span>
+            </div>
+            <div class="ticker-node" style="border-left: 1px solid var(--border-color); padding-left: 2rem;">
+                <span class="ticker-val" style="color: var(--accent);">0ms</span>
+                <span class="ticker-lbl">Transaction Latency</span>
+            </div>
+        </div>
+
+        <!-- Strategic Marketing Value Props Grid -->
+        <div class="dashboard-grid" style="margin-top: 4rem; margin-bottom: 4rem;">
+            
+            <div class="card feature-card-highlight" style="border-top: 4px solid var(--accent);">
+                <div>
+                    <div class="feature-icon-box" style="background: var(--accent-light); color: var(--accent);">💸</div>
+                    <h3>Peer-to-Peer Transfer</h3>
+                    <p style="margin-top: 0.5rem; font-size: 0.95rem;">Send fake capital ledger resources between accounts instantly using our mock validation framework parameters.</p>
+                </div>
+            </div>
+            
+            <div class="card feature-card-highlight" style="border-top: 4px solid var(--success);">
+                <div>
+                    <div class="feature-icon-box" style="background: #d1fae5; color: var(--success);">📊</div>
+                    <h3>Interactive Analytics</h3>
+                    <p style="margin-top: 0.5rem; font-size: 0.95rem;">Monitor real-time simulated cash flow distributions with our advanced dashboard powered by active chart matrix displays.</p>
+                </div>
+            </div>
+
+            <div class="card feature-card-highlight" style="border-top: 4px solid #8b5cf6;">
+                <div>
+                    <div class="feature-icon-box" style="background: #f3e8ff; color: #8b5cf6;">🖨️</div>
+                    <h3>Audit-Ready Statements</h3>
+                    <p style="margin-top: 0.5rem; font-size: 0.95rem;">Compile corporate ledger structures into downloadable statement layouts instantly using integrated client-side PDF document engines.</p>
+                </div>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <!-- Application Footer -->
+    <footer>
+        <p>&copy; 2026 Apex Commercial Bank Ltd. All Rights Reserved. Designed for Enterprise Sandbox Simulations.</p>
+    </footer>
+
+    <!-- Script layer to fetch metrics counts smoothly from LocalStorage DB -->
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Get profiles size from mock data tables
+            const accounts = JSON.parse(localStorage.getItem('bank_accounts')) || {};
+            const accountKeys = Object.keys(accounts);
+            
+            let totalPoolVolume = 0;
+            accountKeys.forEach(key => {
+                totalPoolVolume += accounts[key].balance || 0;
+            });
+
+            // Smoothly display configuration values on layout nodes
+            document.getElementById('metricUsers').innerText = accountKeys.length;
+            document.getElementById('metricVolume').innerText = `₹${Math.round(totalPoolVolume).toLocaleString('en-IN')}`;
+        });
+    </script>
+
+</body>
+</html>

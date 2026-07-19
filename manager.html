@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .nav-btn {
+            background-color: transparent;
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            padding: 0.5rem 1rem;
+        }
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Manager Panel</span></div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="managerNameDisplay" style="color: #60a5fa; font-weight: 600;">Manager ID: None</span>
+            <button class="btn-danger nav-btn" style="border:none;" onclick="Session.logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="margin-bottom: 2.5rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+            <h2>Branch Operations Command Center</h2>
+            <p style="color: #64748b;">Welcome to your branch console. Select an administrative action path from the management grid below.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Action Card 1: Loan Approvals -->
+            <div class="card" style="background: white; border-top: 4px solid var(--accent);">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Credit & Loan Management</h3>
+                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Review pending retail loan applications (Home, Study, Car) and execute dynamic balance credits.</p>
+                <a href="lone aproved.html"><button style="width: 100%;">Open Approval System</button></a>
+            </div>
+
+            <!-- Action Card 2: Employee Registration -->
+            <div class="card" style="background: white; border-top: 4px solid #8b5cf6;">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Staff Enrollment</h3>
+                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Register new general bank staff and employees to allow account handling and cash transactions.</p>
+                <a href="employesresiter.html"><button style="width: 100%; background-color: #8b5cf6;">Register Employee</button></a>
+            </div>
+
+            <!-- Action Card 3: Direct Account Creation Override -->
+            <div class="card" style="background: white; border-top: 4px solid var(--success);">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Instant Account Desk</h3>
+                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Direct desk override access for Managers to immediately register standard customer profiles.</p>
+                <a href="newaccountoppen.html"><button style="width: 100%; background-color: var(--success);">Open Customer A/C</button></a>
+            </div>
+        </div>
+
+        <!-- System Summary / Logs Box -->
+        <div class="card" style="margin-top: 2.5rem; background: #f8fafc;">
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-weight: 600;">⚠️ Simulation Control Notice</h4>
+            <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5;">
+                As a Branch Manager, your approved actions directly modify the browser's global `localStorage` database. Releasing funds or creating profiles is simulated immediately. Keep credentials secure.
+            </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Security Gate: Verify if Manager session is active
+        const currentSession = Session.getUser();
+        if(!currentSession || currentSession.role !== 'manager') {
+            alert('⚠️ Access Denied: Authorized Branch Managers Only!');
+            window.location.href = 'employeslogin.html';
+        } else {
+            // Display Manager ID on Header
+            document.getElementById('managerNameDisplay').innerText = `💼 ${currentSession.user}`;
+        }
+    </script>
+</body>
+</html>

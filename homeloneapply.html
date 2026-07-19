@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Home Loan - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Home Loans</span></div>
+        <nav><a href="lone.html">Loan Center</a></nav>
+    </header>
+
+    <div class="container" style="max-width: 550px;">
+        <h2>Home Loan Application</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Submit documentation parameters to request manager approval for property funding.</p>
+        
+        <form id="homeLoanForm">
+            <div class="form-group">
+                <label>Applicant Account Number</label>
+                <input type="text" id="hlAcc" readonly style="background: #f1f5f9; font-weight: bold; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Property Value Estimation (INR)</label>
+                <input type="number" id="hlPropValue" placeholder="e.g. 5000000" required>
+            </div>
+            <div class="form-group">
+                <label>Required Funding Amount (Fake INR)</label>
+                <input type="number" id="hlAmount" placeholder="Enter loan amount" required>
+            </div>
+            <div class="form-group">
+                <label>Tenure (In Years)</label>
+                <select id="hlTenure">
+                    <option value="5">5 Years (Simulated)</option>
+                    <option value="10">10 Years (Simulated)</option>
+                    <option value="20">20 Years (Simulated)</option>
+                </select>
+            </div>
+            <button type="submit" style="width: 100%;">Submit Loan Application</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const user = Session.getUser();
+        if (!user || user.role !== 'customer') {
+            alert('Authorized Customer session required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('hlAcc').value = user.accountNo;
+        }
+
+        document.getElementById('homeLoanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const accNum = user.accountNo;
+            const amount = parseFloat(document.getElementById('hlAmount').value);
+            
+            let allLoans = getDB('loans') || [];
+            
+            // Push structured loan record into global simulated database
+            allLoans.push({
+                accNum: accNum,
+                type: 'Home Loan',
+                amount: amount,
+                status: 'Pending',
+                timestamp: new Date().toLocaleString()
+            });
+
+            setDB('loans', allLoans);
+            alert(`🎉 Success: Home Loan application for ₹${amount} submitted!\nStatus is currently 'Pending' waiting for Branch Manager approval.`);
+            window.location.href = 'lonestatus.html';
+        });
+    </script>
+</body>
+</html>

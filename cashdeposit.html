@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Deposit - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Cash Counter</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 480px; margin-top: 4rem;">
+        <h2>Virtual Cash Deposit Desk</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem;">Instantly update your simulated balance via online deposit mechanism.</p>
+        
+        <form id="depositSimulatorForm">
+            <div class="form-group">
+                <label>Confirm Account Number</label>
+                <input type="text" id="depAccNum" readonly style="background-color: #f1f5f9; cursor: not-allowed; font-weight: bold;">
+            </div>
+            <div class="form-group">
+                <label>Deposit Amount (Fake INR)</label>
+                <input type="number" id="depAmount" min="100" placeholder="Minimum ₹100" required>
+            </div>
+            <button type="submit" style="width: 100%; background-color: var(--success);">Complete Virtual Deposit</button>
+        </form>
+        
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="accountbalancecheck.html" style="color: var(--accent); font-weight: 600; text-decoration: none;">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Authorized Customer access required.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('depAccNum').value = session.accountNo;
+        }
+
+        document.getElementById('depositSimulatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const acc = session.accountNo;
+            const amount = document.getElementById('depAmount').value;
+
+            // Trigger global transaction system from script.js
+            let status = updateFakeBalance(acc, amount, 'deposit');
+
+            if (status.success) {
+                alert(`🎉 Deposit Successful!\nAmount Credited: ₹${amount}\nNew Dynamic Fake Balance: ₹${status.balance}`);
+                window.location.href = 'accountbalancecheck.html';
+            } else {
+                alert(`❌ Deposit Failed: ${status.msg}`);
+            }
+        });
+    </script>
+</body>
+</html>

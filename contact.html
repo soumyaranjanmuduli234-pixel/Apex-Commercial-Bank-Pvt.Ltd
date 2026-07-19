@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Bank Ltd.</span></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="login.html">Customer Login</a>
+            <a href="employeslogin.html">Staff Portal</a>
+            <a href="contact.html" class="active">Contact Us</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Contact & Support Center</h2>
+        
+        <div class="dashboard-grid">
+            <!-- Left Card: Contact Info -->
+            <div class="card" style="background: white;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Corporate Office</h3>
+                <p style="margin-bottom: 0.5rem;"><strong>Address:</strong> Corporate Tower, IDCO Plot, Bhubaneswar, Odisha, India</p>
+                <p style="margin-bottom: 0.5rem;"><strong>Toll-Free No:</strong> 1800-123-7890 (Simulation Support)</p>
+                <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> support@apexcommercial.com</p>
+                <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #64748b; font-style: italic;">
+                    Available 24/7 for digital simulation queries.
+                </p>
+            </div>
+            
+            <!-- Right Card: Form -->
+            <div class="card" style="background: white;">
+                <h3 style="color: var(--accent); margin-bottom: 1rem;">Send Us a Message</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="contactName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Number (Optional)</label>
+                        <input type="text" id="contactAcc" placeholder="e.g. 100200">
+                    </div>
+                    <div class="form-group">
+                        <label>Message/Query</label>
+                        <textarea id="contactMsg" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; outline: none;" placeholder="How can we help you today?" required></textarea>
+                    </div>
+                    <button type="submit" style="width: 100%;">Submit Query</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for reaching out! Your simulation ticket has been registered successfully. Our team will look into it.');
+            this.reset();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Loan Status - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Credit Tracking</span></div>
+        <nav>
+            <a href="accountbalancecheck.html">Dashboard</a>
+            <a href="lone.html">Apply New Loan</a>
+            <a href="#" onclick="Session.logout()">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Your Loan Application Statements</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Review historical states and approvals of all credit lines processed by our branch managers.</p>
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Loan Category</th>
+                        <th>Simulated Amount</th>
+                        <th>Current Status</th>
+                    </tr>
+                </thead>
+                <tbody id="customerLoanTable">
+                    <!-- Loaded via JavaScript dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if (!session || session.role !== 'customer') {
+            alert('Customer login authentication required.');
+            window.location.href = 'login.html';
+        }
+
+        function renderCustomerLoans() {
+            const tbody = document.getElementById('customerLoanTable');
+            tbody.innerHTML = '';
+            
+            let allLoans = getDB('loans') || [];
+            // Target logs only for the logged-in user account number
+            let userLoans = allLoans.filter(l => l.accNum === session.accountNo);
+
+            if(userLoans.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic; padding:2rem;">No loan accounts logs found under your name.</td></tr>`;
+                return;
+            }
+
+            // Loop in reverse to see latest request first
+            userLoans.reverse().forEach(loan => {
+                let badgeClass = 'badge-pending';
+                if(loan.status === 'Approved') badgeClass = 'badge-approved';
+                if(loan.status === 'Rejected') badgeClass = 'badge-rejected';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${loan.timestamp || 'N/A'}</td>
+                        <td style="font-weight:600; color:var(--primary);">${loan.type}</td>
+                        <td>₹${parseFloat(loan.amount).toLocaleString('en-IN')}</td>
+                        <td><span class="badge ${badgeClass}">${loan.status}</span></td>
+                    </tr>`;
+            });
+        }
+
+        renderCustomerLoans();
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apex Commercial Bank - Next-Gen Workspace</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Asset Terminal</span></div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="kycBadgeContainer"></div>
+            <span id="welcomeUser" style="color: #60a5fa; font-weight: bold;">User A/C</span>
+            <button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="Session.logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Portfolio Analytics Card Layout -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h2 style="color: white; border: none; margin: 0;" id="accName">Loading Profile Name...</h2>
+                <p style="color: #94a3b8; margin-top: 5px;" id="accNum">Account Number: ---------</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;">Primary Simulated Cash</p>
+                <h1 style="font-size: 2.3rem; color: #10b981;" id="accBal">₹0.00</h1>
+            </div>
+        </div>
+
+        <!-- System Architecture Master Section Navigation Tabs -->
+        <div class="tab-container">
+            <button class="tab-btn active-tab" onclick="switchTab('analytics-section', this)">📊 Statements</button>
+            <button class="tab-btn" onclick="switchTab('transfer-section', this)">💸 Wire Transfers</button>
+            <button class="tab-btn" onclick="switchTab('crypto-section', this)">🪙 Crypto & Trading</button>
+            <button class="tab-btn" onclick="switchTab('insurance-section', this)">🛡️ Policies & Wealth</button>
+            <button class="tab-btn" onclick="switchTab('kyc-section', this)">👤 Profile KYC Desk</button>
+        </div>
+
+        <!-- ================= PANEL 1: STATEMENTS & PASSBOOK ================= -->
+        <div id="analytics-section" class="tab-panel active-panel">
+            <div style="height: 240px; position: relative; margin-bottom: 2rem; background: white; padding: 10px; border-radius: 8px; border:1px solid var(--border-color);">
+                <canvas id="analyticsChart"></canvas>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                <h3>Account Transaction Passbook</h3>
+                <button class="btn-success" style="font-size: 0.85rem; padding: 6px 12px;" onclick="generateStatementPDF()">🖨️ Download Statement</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Timestamp</th><th>Description</th><th>Type</th><th>Amount</th><th>Ref Balance</th></tr></thead>
+                    <tbody id="passbookBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 2: CORE TRANSFERS & UTILITIES ================= -->
+        <div id="transfer-section" class="tab-panel">
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Peer-to-Peer Fund Transfer</h3>
+                    <form id="p2pForm">
+                        <div class="form-group"><label>Target Account Number</label><input type="text" id="p2pTarget" required></div>
+                        <div class="form-group"><label>Transfer Amount (Fake INR)</label><input type="number" id="p2pAmount" required></div>
+                        <button type="submit" style="width: 100%;">Execute Instant Wire</button>
+                    </form>
+                </div>
+                <div class="glass-panel">
+                    <h3>Utilities & Bill Payments Desk</h3>
+                    <form id="billsForm">
+                        <div class="form-group">
+                            <label>Utility Provider</label>
+                            <select id="billCategory">
+                                <option value="Electricity Grid">State Grid Electricity Board</option>
+                                <option value="Mobile Recharge">Cellular Mobile Telephony</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Bill Amount Due</label><input type="number" id="billAmount" required></div>
+                        <button type="submit" style="width: 100%; background-color: #ea580c;">Settle Bill Invoices</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 3: CRYPTO INVESTMENT DESK ================= -->
+        <div id="crypto-section" class="tab-panel">
+            <div class="crypto-ticker-grid">
+                <div class="crypto-card-sm">
+                    <span style="color:#60a5fa; font-weight:bold;">🪙 Bitcoin (BTC)</span>
+                    <h2 style="color:white; border:none; margin:5px 0 0;" id="btcPriceDisplay">₹84,50,000</h2>
+                    <span style="font-size:0.8rem; color:#10b981;">● Live Mock Asset Rates</span>
+                </div>
+                <div class="crypto-card-sm">
+                    <span style="color:#a7f3d0; font-weight:bold;">✨ Ethereum (ETH)</span>
+                    <h2 style="color:white; border:none; margin:5px 0 0;" id="ethPriceDisplay">₹2,85,000</h2>
+                    <span style="font-size:0.8rem; color:#10b981;">● Live Mock Asset Rates</span>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Trade Digital Securities</h3>
+                    <div class="form-group">
+                        <label>Select Asset Token</label>
+                        <select id="cryptoTokenSelect" onchange="updateTradeCalculations()">
+                            <option value="BTC" data-price="8450000">Bitcoin (BTC)</option>
+                            <option value="ETH" data-price="285000">Ethereum (ETH)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Trade Action</label>
+                        <select id="cryptoAction">
+                            <option value="BUY">Acquire Token (Buy)</option>
+                            <option value="SELL">Liquidate Token (Sell)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Order Allocation Quantity</label><input type="number" id="cryptoQty" step="0.001" value="0.1" oninput="updateTradeCalculations()"></div>
+                    <p style="font-weight:bold; margin-bottom:1rem; font-size:0.9rem;">Estimated Value: <span id="cryptoCalcVal" style="color:var(--accent);">₹0.00</span></p>
+                    <button type="button" style="width:100%; background-color:#3b82f6;" onclick="executeCryptoOrder()">Route Market Order</button>
+                </div>
+                <div class="glass-panel">
+                    <h3>Your Dynamic Asset Ledger Wallet</h3>
+                    <div style="background:#f1f5f9; padding:15px; border-radius:8px;">
+                        <p style="display:flex; justify-content:space-between; font-weight:bold; color:var(--primary);"><span>Bitcoin Owned:</span> <span id="ownedBtc">0.000 BTC</span></p>
+                        <p style="display:flex; justify-content:space-between; font-weight:bold; color:var(--primary); margin-top:10px;"><span>Ethereum Owned:</span> <span id="ownedEth">0.000 ETH</span></p>
+                    </div>
+                    <button type="button" class="btn-success" style="width:100%; margin-top:1.5rem;" onclick="simulateMarketFluctuation()">📈 Simulate Asset Rate Volatility</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 4: INSURANCE & POLICY MANAGER ================= -->
+        <div id="insurance-section" class="tab-panel">
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Wealth & Insurance Policies Catalog</h3>
+                    <div class="form-group">
+                        <label>Select Protection Policy Plan</label>
+                        <select id="policyCategory">
+                            <option value="Comprehensive Health Plan" data-premium="1200">Corporate Health Shield (Premium: ₹1,200/Yr)</option>
+                            <option value="Term Life Endowment" data-premium="2500">Term Life Capital Wealth Cover (Premium: ₹2,500/Yr)</option>
+                        </select>
+                    </div>
+                    <button type="button" style="width:100%; background-color:#8b5cf6;" onclick="purchasePolicy()">Enroll Protection Policy Plan</button>
+                </div>
+                <div class="glass-panel">
+                    <h3>Active Vault Cover Statement Protection</h3>
+                    <div id="activePoliciesContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 5: KYC PROFILE MANAGEMENT TERMINAL ================= -->
+        <div id="kyc-section" class="tab-panel">
+            <div class="glass-panel" style="max-width:550px; margin: 0 auto;">
+                <h3>Identity Verification & KYC Matrix</h3>
+                <p style="font-size:0.9rem; margin-bottom:1.5rem;">Upload documentation identification files parameters. Transactions over ₹10,000 require verification blocks.</p>
+                <div class="form-group"><label>Aadhaar Card Reference Code (12 Digits)</label><input type="text" id="kycAadhaar" pattern="[0-9]{12}" placeholder="e.g. 543267890123" required></div>
+                <div class="form-group"><label>Permanent Account Number (PAN Card)</label><input type="text" id="kycPan" placeholder="e.g. ABCDE1234F" required></div>
+                <div class="form-group"><label>Attach Digital File Copies (Simulated Verification)</label><input type="file" id="kycFile" style="padding:5px;"></div>
+                <button type="button" style="width:100%; background-color:var(--success);" onclick="processKycSubmission()">Submit & Verify Identity Matrix</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const session = Session.getUser();
+        if(!session || session.role !== 'customer') window.location.href = 'login.html';
+        
+        let chartInstance = null;
+        let currentBtcPrice = 8450000;
+        let currentEthPrice = 285000;
+
+        function switchTab(panelId, btnEl) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(panelId).classList.add('active-panel');
+            btnEl.classList.add('active-tab');
+        }
+
+        function refreshDashboard() {
+            const accounts = getDB('bank_accounts');
+            const user = accounts[session.accountNo];
+            
+            document.getElementById('welcomeUser').innerText = `👤 ${session.user}`;
+            document.getElementById('accName').innerText = user.name;
+            document.getElementById('accNum').innerText = `Apex Savings Profile Account: # ${session.accountNo}`;
+            document.getElementById('accBal').innerText = `₹${parseFloat(user.balance).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+
+            renderKycStatusBadge();
+            renderPassbookAndChart();
+            renderCryptoWallet();
+            renderActivePolicies();
+            updateTradeCalculations();
+        }
+
+        // KYC Management Operations Logic
+        function renderKycStatusBadge() {
+            let kyc = getDB('kyc_registry') || {};
+            let status = kyc[session.accountNo] || 'PENDING';
+            let container = document.getElementById('kycBadgeContainer');
+            
+            if(status === 'VERIFIED') {
+                container.innerHTML = `<span class="kyc-status-banner kyc-verified">✓ KYC Verified</span>`;
+            } else {
+                container.innerHTML = `<span class="kyc-status-banner kyc-pending">⚠️ KYC Action Required</span>`;
+            }
+        }
+
+        function processKycSubmission() {
+            const adhaar = document.getElementById('kycAadhaar').value;
+            const pan = document.getElementById('kycPan').value;
+            
+            if(adhaar.length !== 12 || pan.length < 5) {
+                return showGlassToast('Invalid Identity Strings Parameters!', 'error');
+            }
+            
+            let registry = getDB('kyc_registry') || {};
+            registry[session.accountNo] = 'VERIFIED';
+            setDB('kyc_registry', registry);
+            showGlassToast('🎉 Identity Matrix Verified! All high-value dynamic transaction caps lifted.', 'success');
+            refreshDashboard();
+        }
+
+        // Crypto Brokerage Infrastructure Operations Logic
+        function updateTradeCalculations() {
+            const select = document.getElementById('cryptoTokenSelect');
+            const qty = parseFloat(document.getElementById('cryptoQty').value) || 0;
+            let currentPrice = select.value === 'BTC' ? currentBtcPrice : currentEthPrice;
+            document.getElementById('cryptoCalcVal').innerText = `₹${(qty * currentPrice).toLocaleString('en-IN')}`;
+        }
+
+        function simulateMarketFluctuation() {
+            // Apply a random percentage wave shift dynamic variations toggle
+            let btcDelta = (Math.random() * 6 - 3) / 100;
+            let ethDelta = (Math.random() * 8 - 4) / 100;
+            
+            currentBtcPrice = Math.round(currentBtcPrice * (1 + btcDelta));
+            currentEthPrice = Math.round(currentEthPrice * (1 + ethDelta));
+            
+            document.getElementById('btcPriceDisplay').innerText = `₹${currentBtcPrice.toLocaleString('en-IN')}`;
+            document.getElementById('ethPriceDisplay').innerText = `₹${currentEthPrice.toLocaleString('en-IN')}`;
+            
+            showGlassToast('📈 Asset Market price nodes fluctuated dynamically!', 'success');
+            updateTradeCalculations();
+        }
+
+        function executeCryptoOrder() {
+            const token = document.getElementById('cryptoTokenSelect').value;
+            const action = document.getElementById('cryptoAction').value;
+            const qty = parseFloat(document.getElementById('cryptoQty').value);
+            
+            let currentPrice = token === 'BTC' ? currentBtcPrice : currentEthPrice;
+            let orderCost = qty * currentPrice;
+            
+            let wallets = getDB('crypto_wallets') || {};
+            if(!wallets[session.accountNo]) wallets[session.accountNo] = { BTC: 0, ETH: 0 };
+            
+            if(action === 'BUY') {
+                let status = updateFakeBalance(session.accountNo, orderCost, 'withdraw', `Acquired crypto token asset ${qty} ${token}`);
+                if(status.success) {
+                    wallets[session.accountNo][token] += qty;
+                    setDB('crypto_wallets', wallets);
+                    showGlassToast(`🎉 Trade Execution Settled: Bought ${qty} ${token}`, 'success');
+                } else {
+                    showGlassToast(`Order Canceled: ${status.msg}`, 'error');
+                }
+            } else if(action === 'SELL') {
+                if(wallets[session.accountNo][token] < qty) return showGlassToast('Asset Liquidation Blocked: Insufficient Tokens!', 'error');
+                
+                updateFakeBalance(session.accountNo, orderCost, 'deposit', `Liquidated crypto asset ${qty} ${token}`);
+                wallets[session.accountNo][token] -= qty;
+                setDB('crypto_wallets', wallets);
+                showGlassToast(`💸 Liquidated successfully: Credited ₹${orderCost} fake cash.`, 'success');
+            }
+            refreshDashboard();
+        }
+
+        function renderCryptoWallet() {
+            let wallets = getDB('crypto_wallets') || {};
+            let w = wallets[session.accountNo] || { BTC: 0, ETH: 0 };
+            document.getElementById('ownedBtc').innerText = `${w.BTC.toFixed(3)} BTC`;
+            document.getElementById('ownedEth').innerText = `${w.ETH.toFixed(3)} ETH`;
+        }
+
+        // Insurance Allocation Policies Logics
+        function purchasePolicy() {
+            const el = document.getElementById('policyCategory');
+            const pName = el.value;
+            const premium = parseFloat(el.options[el.selectedIndex].getAttribute('data-premium'));
+            
+            let status = updateFakeBalance(session.accountNo, premium, 'withdraw', `Initial Premium Settlement Cover: ${pName}`);
+            if(status.success) {
+                let policies = getDB('insurance_policies') || {};
+                if(!policies[session.accountNo]) policies[session.accountNo] = [];
+                policies[session.accountNo].push({ name: pName, cost: premium, activeSince: new Date().toLocaleDateString() });
+                setDB('insurance_policies', policies);
+                showGlassToast(`🛡️ ${pName} protection activated safely!`, 'success');
+                refreshDashboard();
+            } else {
+                showGlassToast(`Policy Activation Denied: ${status.msg}`, 'error');
+            }
+        }
+
+        function renderActivePolicies() {
+            let container = document.getElementById('activePoliciesContainer');
+            container.innerHTML = '';
+            let policies = getDB('insurance_policies')[session.accountNo] || [];
+            
+            if(policies.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-style:italic;">No active insurance asset lines.</p>`;
+                return;
+            }
+            policies.forEach(p => {
+                container.innerHTML += `
+                    <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.9rem; font-weight:bold; color:var(--primary);">
+                        🛡️ ${p.name} <span style="float:right; color:var(--accent);">₹${p.cost}/Yr Premium</span>
+                    </div>`;
+            });
+        }
+
+        // Standard Transfer Desk Action Handler
+        document.getElementById('p2pForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const target = document.getElementById('p2pTarget').value.trim();
+            const amt = parseFloat(document.getElementById('p2pAmount').value);
+            
+            if(target === session.accountNo) return showGlassToast('Cannot wire assets to yourself.', 'error');
+            let accounts = getDB('bank_accounts');
+            if(!accounts[target]) return showGlassToast('Receiver target profile code not found.', 'error');
+
+            let status = updateFakeBalance(session.accountNo, amt, 'withdraw', `Wire Transfer to A/C ${target}`);
+            if(status.success) {
+                updateFakeBalance(target, amt, 'deposit', `Received Wire from A/C ${session.accountNo}`);
+                showGlassToast('🎉 Remittance assets dispatched successfully!', 'success');
+                this.reset();
+                refreshDashboard();
+            } else {
+                showGlassToast(`Remittance Error: ${status.msg}`, 'error');
+            }
+        });
+
+        // Standard Utility Bill Invoice Handler
+        document.getElementById('billsForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('billAmount').value);
+            let res = updateFakeBalance(session.accountNo, amt, 'withdraw', 'Settle Bill Invoice');
+            if(res.success) {
+                showGlassToast('Invoice settled successfully.', 'success');
+                this.reset();
+                refreshDashboard();
+            } else {
+                showGlassToast(res.msg, 'error');
+            }
+        });
+
+        // Charts & Data Ledger Compiler Matrix
+        function renderPassbookAndChart() {
+            const tbody = document.getElementById('passbookBody');
+            tbody.innerHTML = '';
+            const history = getDB('tx_history')[session.accountNo] || [];
+            let cr = 0, dr = 0;
+
+            history.slice().reverse().forEach(tx => {
+                if(tx.type === 'DEPOSIT') cr += tx.amount;
+                if(tx.type === 'WITHDRAW') dr += tx.amount;
+                let c = tx.type === 'DEPOSIT' ? 'color:#10b981; font-weight:bold;' : 'color:#ef4444; font-weight:bold;';
+                tbody.innerHTML += `<tr><td>${tx.date}</td><td>${tx.desc}</td><td style="${c}">${tx.type}</td><td style="${c}">₹${tx.amount}</td><td>₹${tx.refBal.toFixed(2)}</td></tr>`;
+            });
+
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['Credits Flow Sum', 'Debits Flow Sum'], datasets: [{ data: [cr, dr], backgroundColor: ['#10b981', '#ef4444'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function generateStatementPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const history = getDB('tx_history')[session.accountNo] || [];
+            doc.setFillColor(15, 23, 42); doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text("APEX COMMERCIAL BANK STATEMENT", 15, 20);
+            let rows = history.map(tx => [tx.date, tx.desc, tx.type, `INR ${tx.amount}`, `INR ${tx.refBal.toFixed(2)}`]);
+            doc.autoTable({ startY: 40, head: [['Date', 'Description', 'Type', 'Amount', 'Balance']], body: rows });
+            doc.save(`Statement_${session.accountNo}.pdf`);
+            showGlassToast('PDF Document statement saved successfully.', 'success');
+        }
+
+        refreshDashboard();
+    </script>
+</body>
+</html>

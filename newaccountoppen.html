@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Account Desk - Apex Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apex Commercial <span>Account Desk</span></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <span id="deskUserDisplay" style="color: #60a5fa; font-weight: bold;">Desk: Guest</span>
+            <button class="btn-danger" onclick="Session.logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 600px;">
+        <h2>New Account Opening Form</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">Authorized Staff Entry Portal. Fill customer parameters to generate standard profiles instantly.</p>
+        
+        <form id="staffAccountDeskForm">
+            <div class="form-group">
+                <label>Customer Full Name</label>
+                <input type="text" id="sCustName" placeholder="Enter Full Name" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="sCustEmail" placeholder="customer@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Generate Account Number (Numeric)</label>
+                <input type="text" id="sCustAcc" placeholder="Create Unique A/C Num" pattern="[0-9]+" required>
+            </div>
+            <div class="form-group">
+                <label>Set Default Temporary Password</label>
+                <input type="password" id="sCustPass" value="Apex@123" placeholder="Temporary login pass" required>
+            </div>
+            <div class="form-group">
+                <label>Initial Cash Deposit (Fake INR)</label>
+                <input type="number" id="sCustBalance" value="10000" min="500" placeholder="Minimum ₹500" required>
+            </div>
+            <button type="submit" style="width: 100%; background-color: var(--success);">Confirm & Provision Account</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Staff Verification Guard (Only Employee and Manager allowed)
+        const activeStaff = Session.getUser();
+        if(!activeStaff || (activeStaff.role !== 'employee' && activeStaff.role !== 'manager')) {
+            alert('❌ Access Prohibited: Staff Portal authentication is required to access this console.');
+            window.location.href = 'employeslogin.html';
+        } else {
+            document.getElementById('deskUserDisplay').innerText = `Desk: ${activeStaff.user} (${activeStaff.role.toUpperCase()})`;
+        }
+
+        document.getElementById('staffAccountDeskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('sCustName').value.trim();
+            const email = document.getElementById('sCustEmail').value.trim();
+            const accNum = document.getElementById('sCustAcc').value.trim();
+            const password = document.getElementById('sCustPass').value;
+            const balance = parseFloat(document.getElementById('sCustBalance').value);
+
+            let allAccounts = getDB('bank_accounts') || {};
+
+            if(allAccounts[accNum]) {
+                alert('⚠️ System Error: Account number matches an existing customer profile.');
+                return;
+            }
+
+            // Provision user profile directly into database
+            allAccounts[accNum] = {
+                name: name,
+                email: email,
+                password: password,
+                balance: balance
+            };
+
+            setDB('bank_accounts', allAccounts);
+            alert(`🎉 Success: Account provisioned successfully!\nAccount: ${accNum}\nBalance Loaded: ₹${balance} (Fake Cash)`);
+            this.reset();
+            document.getElementById('sCustPass').value = "Apex@123";
+            document.getElementById('sCustBalance').value = "10000";
+        });
+    </script>
+</body>
+</html>
