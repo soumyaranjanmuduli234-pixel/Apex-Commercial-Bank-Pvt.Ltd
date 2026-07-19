@@ -3,79 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manager Dashboard - Apex Bank</title>
+    <title>Apex Bank - Enterprise Manager Workspace</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .nav-btn {
-            background-color: transparent;
-            border: 1px solid #475569;
-            color: #cbd5e1;
-            padding: 0.5rem 1rem;
-        }
-        .nav-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">Apex Commercial <span>Manager Panel</span></div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="managerNameDisplay" style="color: #60a5fa; font-weight: 600;">Manager ID: None</span>
-            <button class="btn-danger nav-btn" style="border:none;" onclick="Session.logout()">Logout</button>
-        </div>
+        <div class="logo">Apex Enterprise <span>Manager Console</span></div>
+        <button class="btn-danger" onclick="Session.logout()">Logout Console</button>
     </header>
 
     <div class="container">
-        <div style="margin-bottom: 2.5rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
-            <h2>Branch Operations Command Center</h2>
-            <p style="color: #64748b;">Welcome to your branch console. Select an administrative action path from the management grid below.</p>
+        <!-- Dashboard Segment Navigation Controls -->
+        <div class="tab-container">
+            <button class="tab-btn active-tab" onclick="switchManagerTab('accounts-panel', this)">👤 Account Management</button>
+            <button class="tab-btn" onclick="switchManagerTab('loans-panel', this)">🏦 Dynamic Loan Audits</button>
+            <button class="tab-btn" onclick="switchManagerTab('cards-panel', this)">💳 Card Issuance verification</button>
         </div>
 
-        <div class="dashboard-grid">
-            <!-- Action Card 1: Loan Approvals -->
-            <div class="card" style="background: white; border-top: 4px solid var(--accent);">
-                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Credit & Loan Management</h3>
-                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Review pending retail loan applications (Home, Study, Car) and execute dynamic balance credits.</p>
-                <a href="lone aproved.html"><button style="width: 100%;">Open Approval System</button></a>
-            </div>
-
-            <!-- Action Card 2: Employee Registration -->
-            <div class="card" style="background: white; border-top: 4px solid #8b5cf6;">
-                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Staff Enrollment</h3>
-                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Register new general bank staff and employees to allow account handling and cash transactions.</p>
-                <a href="employesresiter.html"><button style="width: 100%; background-color: #8b5cf6;">Register Employee</button></a>
-            </div>
-
-            <!-- Action Card 3: Direct Account Creation Override -->
-            <div class="card" style="background: white; border-top: 4px solid var(--success);">
-                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Instant Account Desk</h3>
-                <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem;">Direct desk override access for Managers to immediately register standard customer profiles.</p>
-                <a href="newaccountoppen.html"><button style="width: 100%; background-color: var(--success);">Open Customer A/C</button></a>
+        <!-- ================= SEGMENT 1: PROFILE CREATION & LEDGER CHECK ================= -->
+        <div id="accounts-panel" class="tab-panel active-panel">
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Open New Customer Ledger Account</h3>
+                    <form id="createAccountForm">
+                        <div class="form-group"><label>Account Holder Full Name</label><input type="text" id="custName" required></div>
+                        <div class="form-group"><label>Desired Account Number (Digits)</label><input type="text" id="custAccNo" required></div>
+                        <div class="form-group"><label>Initial Balance Asset Setup</label><input type="number" id="custBal" value="5000" required></div>
+                        <div class="form-group"><label>Console Access Password</label><input type="password" id="custPass" required></div>
+                        <button type="submit" style="width:100%; background-color:var(--primary);">Compile Profile Node</button>
+                    </form>
+                </div>
+                <div class="glass-panel">
+                    <h3>Active Account Registry Matrix</h3>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead><tr><th>A/C Num</th><th>Name</th><th>Sim Balance</th><th>KYC Status</th></tr></thead>
+                            <tbody id="managerAccountsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- System Summary / Logs Box -->
-        <div class="card" style="margin-top: 2.5rem; background: #f8fafc;">
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-weight: 600;">⚠️ Simulation Control Notice</h4>
-            <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5;">
-                As a Branch Manager, your approved actions directly modify the browser's global `localStorage` database. Releasing funds or creating profiles is simulated immediately. Keep credentials secure.
-            </p>
+        <!-- ================= SEGMENT 2: CAR, HOME & STUDY LOAN VERIFICATION TERMINAL ================= -->
+        <div id="loans-panel" class="tab-panel">
+            <div class="glass-panel">
+                <h3>System Core Loan Verification Desk</h3>
+                <p style="font-size:0.85rem; margin-bottom:1rem; color:#64748b;">Processes dynamic portfolios matching Car Loans, Home Structural Loans, or Study Allocation metrics.</p>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>A/C Target</th><th>Loan Category</th><th>Amount Requested</th><th>Status Matrix</th><th>Actions Dispatch</th></tr></thead>
+                        <tbody id="managerLoansTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        <!-- ================= SEGMENT 3: DEBIT & CREDIT CARD PROVISIONING MATRIX ================= -->
+        <div id="cards-panel" class="tab-panel">
+            <div class="glass-panel">
+                <h3>Card Request Approval & Ledger Verification Node</h3>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>A/C Target</th><th>Instrument Type</th><th>Assigned Limits</th><th>Verification Node</th><th>Change Parameter</th></tr></thead>
+                        <tbody id="managerCardsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Security Gate: Verify if Manager session is active
-        const currentSession = Session.getUser();
-        if(!currentSession || currentSession.role !== 'manager') {
-            alert('⚠️ Access Denied: Authorized Branch Managers Only!');
-            window.location.href = 'employeslogin.html';
-        } else {
-            // Display Manager ID on Header
-            document.getElementById('managerNameDisplay').innerText = `💼 ${currentSession.user}`;
+        const session = Session.getUser();
+        if(!session || session.role !== 'manager') window.location.href = 'login.html';
+
+        function switchManagerTab(panelId, btnEl) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(panelId).classList.add('active-panel');
+            btnEl.classList.add('active-tab');
         }
+
+        function renderManagerConsole() {
+            // Render Profile Listings
+            const accounts = getDB('bank_accounts') || {};
+            const kyc = getDB('kyc_registry') || {};
+            const accBody = document.getElementById('managerAccountsTableBody');
+            accBody.innerHTML = '';
+            
+            Object.keys(accounts).forEach(num => {
+                let status = kyc[num] || 'PENDING';
+                let color = status === 'VERIFIED' ? '#10b981' : '#d97706';
+                accBody.innerHTML += `<tr><td>#${num}</td><td>${accounts[num].name}</td><td>₹${accounts[num].balance.toLocaleString()}</td><td style="color:${color}; font-weight:bold;">${status}</td></tr>`;
+            });
+
+            // Render Dynamic Loans Pipeline (Car / Home / Study)
+            const loans = getDB('loans') || [];
+            const loanBody = document.getElementById('managerLoansTableBody');
+            loanBody.innerHTML = '';
+            
+            if(loans.length === 0) {
+                loanBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No loan ledger streams active.</td></tr>`;
+            } else {
+                loans.forEach((l, index) => {
+                    let actions = l.status === 'PENDING' ? `
+                        <button class="btn-success" style="padding:4px 8px; font-size:0.8rem;" onclick="evaluateLoan(${index}, 'APPROVED')">Approve</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="evaluateLoan(${index}, 'REJECTED')">Reject</button>
+                    ` : `<span style="color:#64748b; font-weight:bold;">Processed</span>`;
+                    
+                    loanBody.innerHTML += `<tr><td>#${l.accountNo}</td><td><strong>${l.type}</strong></td><td>₹${l.amount.toLocaleString()}</td><td>${l.status}</td><td>${actions}</td></tr>`;
+                });
+            }
+
+            // Render Credit/Debit Instrumentation Desk
+            const cards = getDB('cards') || [];
+            const cardBody = document.getElementById('managerCardsTableBody');
+            cardBody.innerHTML = '';
+            
+            if(cards.length === 0) {
+                cardBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No credit/debit instruments requested.</td></tr>`;
+            } else {
+                cards.forEach((c, index) => {
+                    cardBody.innerHTML += `
+                        <tr>
+                            <td>#${c.accountNo}</td>
+                            <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold;">${c.type}</span></td>
+                            <td>₹${c.limit.toLocaleString()}</td>
+                            <td><span style="color:#10b981; font-weight:bold;">● ${c.status}</span></td>
+                            <td><button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="revokeCard(${index})">Revoke Instrument</button></td>
+                        </tr>`;
+                });
+            }
+        }
+
+        // Action Processor Forms Nodes
+        document.getElementById('createAccountForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const num = document.getElementById('custAccNo').value.trim();
+            const bal = parseFloat(document.getElementById('custBal').value);
+            const pass = document.getElementById('custPass').value;
+
+            let accounts = getDB('bank_accounts') || {};
+            if(accounts[num]) return showGlassToast('Account index conflict: Number already active!', 'error');
+
+            accounts[num] = { name: name, balance: bal, password: pass };
+            setDB('bank_accounts', accounts);
+            
+            // Trigger automatic entry into transaction registry tracking matrix
+            let txHistory = getDB('tx_history') || {};
+            txHistory[num] = [{ date: new Date().toLocaleString(), type: 'DEPOSIT', amount: bal, desc: 'Initial Balance Account Capitalization', refBal: bal }];
+            setDB('tx_history', txHistory);
+
+            showGlassToast(`🎉 Customer profile node #${num} compiled into system registry!`, 'success');
+            this.reset();
+            renderManagerConsole();
+        });
+
+        function evaluateLoan(index, resolution) {
+            let loans = getDB('loans') || [];
+            let targetLoan = loans[index];
+            targetLoan.status = resolution;
+            
+            if(resolution === 'APPROVED') {
+                updateFakeBalance(targetLoan.accountNo, targetLoan.amount, 'deposit', `Disbursed Principal: ${targetLoan.type}`);
+            }
+            
+            setDB('loans', loans);
+            showGlassToast(`💼 Loan entry modified state to: ${resolution}`, 'success');
+            renderManagerConsole();
+        }
+
+        function revokeCard(index) {
+            let cards = getDB('cards') || [];
+            cards.splice(index, 1);
+            setDB('cards', cards);
+            showGlassToast('💳 Financial asset card instrument successfully revoked from profile ledger.', 'success');
+            renderManagerConsole();
+        }
+
+        renderManagerConsole();
     </script>
 </body>
 </html>

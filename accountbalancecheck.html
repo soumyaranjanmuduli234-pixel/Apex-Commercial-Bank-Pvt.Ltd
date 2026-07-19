@@ -36,10 +36,12 @@
         <!-- System Architecture Master Section Navigation Tabs -->
         <div class="tab-container">
             <button class="tab-btn active-tab" onclick="switchTab('analytics-section', this)">📊 Statements</button>
-            <button class="tab-btn" onclick="switchTab('transfer-section', this)">💸 Wire Transfers</button>
+            <button class="tab-btn" onclick="switchTab('cash-section', this)">💰 Deposit/Withdraw</button>
+            <button class="tab-btn" onclick="switchTab('transfer-section', this)">💸 Transfers & Cards</button>
+            <button class="tab-btn" onclick="switchTab('loan-section', this)">🏦 Loans Portal</button>
             <button class="tab-btn" onclick="switchTab('crypto-section', this)">🪙 Crypto & Trading</button>
-            <button class="tab-btn" onclick="switchTab('insurance-section', this)">🛡️ Policies & Wealth</button>
-            <button class="tab-btn" onclick="switchTab('kyc-section', this)">👤 Profile KYC Desk</button>
+            <button class="tab-btn" onclick="switchTab('insurance-section', this)">🛡️ Policies</button>
+            <button class="tab-btn" onclick="switchTab('kyc-section', this)">👤 Profile KYC</button>
         </div>
 
         <!-- ================= PANEL 1: STATEMENTS & PASSBOOK ================= -->
@@ -59,7 +61,23 @@
             </div>
         </div>
 
-        <!-- ================= PANEL 2: CORE TRANSFERS & UTILITIES ================= -->
+        <!-- ================= PANEL 2: SIMULATED DEPOSIT & WITHDRAWAL ================= -->
+        <div id="cash-section" class="tab-panel">
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Simulated Safe Deposit Vault</h3>
+                    <div class="form-group"><label>Deposit Amount (Fake INR)</label><input type="number" id="cashDepositAmt" value="1000"></div>
+                    <button type="button" style="width: 100%; background-color: #10b981;" onclick="handleCashOperation('deposit')">Credit To Account Ledger</button>
+                </div>
+                <div class="glass-panel">
+                    <h3>Simulated ATM Withdrawal</h3>
+                    <div class="form-group"><label>Withdraw Amount (Fake INR)</label><input type="number" id="cashWithdrawAmt" value="500"></div>
+                    <button type="button" style="width: 100%; background-color: #ef4444;" onclick="handleCashOperation('withdraw')">Debit From Account Ledger</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 3: TRANSFERS & CARDS HUB ================= -->
         <div id="transfer-section" class="tab-panel">
             <div class="dashboard-grid">
                 <div class="glass-panel">
@@ -71,23 +89,45 @@
                     </form>
                 </div>
                 <div class="glass-panel">
-                    <h3>Utilities & Bill Payments Desk</h3>
-                    <form id="billsForm">
-                        <div class="form-group">
-                            <label>Utility Provider</label>
-                            <select id="billCategory">
-                                <option value="Electricity Grid">State Grid Electricity Board</option>
-                                <option value="Mobile Recharge">Cellular Mobile Telephony</option>
-                            </select>
+                    <h3>Card Issuance Management Terminal</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="background:#f8fafc; padding:12px; border:1px solid var(--border-color); border-radius:6px;">
+                            <strong>💳 Debit Card Status:</strong> <span id="debitCardStatus" style="color:#2563eb;">Not Applied</span>
+                            <button type="button" class="btn-success" style="width:100%; margin-top:8px; padding:4px 8px; font-size:0.8rem;" onclick="applyCard('DEBIT')">Apply & Check Balance</button>
                         </div>
-                        <div class="form-group"><label>Bill Amount Due</label><input type="number" id="billAmount" required></div>
-                        <button type="submit" style="width: 100%; background-color: #ea580c;">Settle Bill Invoices</button>
-                    </form>
+                        <div style="background:#f8fafc; padding:12px; border:1px solid var(--border-color); border-radius:6px;">
+                            <strong>💳 Credit Card Status:</strong> <span id="creditCardStatus" style="color:#2563eb;">Not Applied</span>
+                            <button type="button" class="btn-success" style="width:100%; margin-top:8px; padding:4px 8px; font-size:0.8rem;" onclick="applyCard('CREDIT')">Apply & Check Limits</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= PANEL 3: CRYPTO INVESTMENT DESK ================= -->
+        <!-- ================= PANEL 4: TRIPLE LOAN MATRIX PLATFORM ================= -->
+        <div id="loan-section" class="tab-panel">
+            <div class="dashboard-grid">
+                <div class="glass-panel">
+                    <h3>Loan Request Generation System</h3>
+                    <div class="form-group">
+                        <label>Loan Sub-Category Profile</label>
+                        <select id="loanTypeSelect">
+                            <option value="Car Loan">Car Loan Portfolio</option>
+                            <option value="Home Loan">Home Loan Infrastructure</option>
+                            <option value="Study Loan">Study Loan (Education Asset)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Requested Principal Amount</label><input type="number" id="loanAmtInput" value="50000"></div>
+                    <button type="button" style="width:100%; background-color:#d97706;" onclick="submitLoanApplication()">File Loan Document Dossier</button>
+                </div>
+                <div class="glass-panel">
+                    <h3>Active Loan Registry Tracking</h3>
+                    <div id="loanStatusDisplayContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANEL 5: CRYPTO INVESTMENT DESK ================= -->
         <div id="crypto-section" class="tab-panel">
             <div class="crypto-ticker-grid">
                 <div class="crypto-card-sm">
@@ -133,7 +173,7 @@
             </div>
         </div>
 
-        <!-- ================= PANEL 4: INSURANCE & POLICY MANAGER ================= -->
+        <!-- ================= PANEL 6: INSURANCE & POLICY MANAGER ================= -->
         <div id="insurance-section" class="tab-panel">
             <div class="dashboard-grid">
                 <div class="glass-panel">
@@ -154,7 +194,7 @@
             </div>
         </div>
 
-        <!-- ================= PANEL 5: KYC PROFILE MANAGEMENT TERMINAL ================= -->
+        <!-- ================= PANEL 7: KYC PROFILE MANAGEMENT TERMINAL ================= -->
         <div id="kyc-section" class="tab-panel">
             <div class="glass-panel" style="max-width:550px; margin: 0 auto;">
                 <h3>Identity Verification & KYC Matrix</h3>
@@ -197,7 +237,91 @@
             renderPassbookAndChart();
             renderCryptoWallet();
             renderActivePolicies();
+            renderCardStatus();
+            renderLoanStatus();
             updateTradeCalculations();
+        }
+
+        // Cash Ledger Deposits/Withdrawals Engines Matrix 
+        function handleCashOperation(type) {
+            const amtId = type === 'deposit' ? 'cashDepositAmt' : 'cashWithdrawAmt';
+            const amt = parseFloat(document.getElementById(amtId).value);
+            const desc = type === 'deposit' ? 'Simulated Cash Vault Deposit' : 'ATM Self Cash Withdrawal';
+            
+            let status = updateFakeBalance(session.accountNo, amt, type, desc);
+            if(status.success) {
+                showGlassToast(`🎉 Asset Transaction Logged: ${type.toUpperCase()} of ₹${amt} compiled!`, 'success');
+                refreshDashboard();
+            } else {
+                showGlassToast(status.msg, 'error');
+            }
+        }
+
+        // Card Deployment Node Framework
+        function applyCard(cardType) {
+            let cards = getDB('cards') || [];
+            let checkExisting = cards.find(c => c.accountNo === session.accountNo && c.type === cardType);
+            
+            if(checkExisting) {
+                return showGlassToast(`💳 Active Card Balance/Limit Profile: ₹${checkExisting.limit.toLocaleString()}`, 'success');
+            }
+            
+            cards.push({
+                accountNo: session.accountNo,
+                type: cardType,
+                status: 'APPROVED',
+                limit: cardType === 'DEBIT' ? 50000 : 150000
+            });
+            setDB('cards', cards);
+            showGlassToast(`🎉 ${cardType} Asset Instrument Generated instantly! Balance sync compiled.`, 'success');
+            refreshDashboard();
+        }
+
+        function renderCardStatus() {
+            let cards = getDB('cards') || [];
+            let deb = cards.find(c => c.accountNo === session.accountNo && c.type === 'DEBIT');
+            let crd = cards.find(c => c.accountNo === session.accountNo && c.type === 'CREDIT');
+            
+            document.getElementById('debitCardStatus').innerHTML = deb ? `<span style="color:#10b981; font-weight:bold;">Active (Lim: ₹${deb.limit})</span>` : 'Not Issued';
+            document.getElementById('creditCardStatus').innerHTML = crd ? `<span style="color:#10b981; font-weight:bold;">Active (Lim: ₹${crd.limit})</span>` : 'Not Issued';
+        }
+
+        // Structural Loan Core Engine
+        function submitLoanApplication() {
+            const type = document.getElementById('loanTypeSelect').value;
+            const amt = parseFloat(document.getElementById('loanAmtInput').value);
+            
+            let loans = getDB('loans') || [];
+            loans.push({
+                accountNo: session.accountNo,
+                type: type,
+                amount: amt,
+                status: 'PENDING',
+                date: new Date().toLocaleDateString()
+            });
+            setDB('loans', loans);
+            showGlassToast('🚀 Loan Matrix Ledger registered. Awaiting Manager evaluation node.', 'success');
+            refreshDashboard();
+        }
+
+        function renderLoanStatus() {
+            let container = document.getElementById('loanStatusDisplayContainer');
+            container.innerHTML = '';
+            let loans = getDB('loans') || [];
+            let userLoans = loans.filter(l => l.accountNo === session.accountNo);
+            
+            if(userLoans.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#64748b; font-style:italic;">No active loan ledger logs found.</p>`;
+                return;
+            }
+            userLoans.forEach(l => {
+                let col = l.status === 'APPROVED' ? '#10b981' : (l.status === 'REJECTED' ? '#ef4444' : '#d97706');
+                container.innerHTML += `
+                    <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.9rem;">
+                        <strong>${l.type}:</strong> ₹${l.amount.toLocaleString()} 
+                        <span style="float:right; color:${col}; font-weight:bold;">● ${l.status}</span>
+                    </div>`;
+            });
         }
 
         // KYC Management Operations Logic
@@ -205,26 +329,22 @@
             let kyc = getDB('kyc_registry') || {};
             let status = kyc[session.accountNo] || 'PENDING';
             let container = document.getElementById('kycBadgeContainer');
-            
             if(status === 'VERIFIED') {
                 container.innerHTML = `<span class="kyc-status-banner kyc-verified">✓ KYC Verified</span>`;
             } else {
-                container.innerHTML = `<span class="kyc-status-banner kyc-pending">⚠️ KYC Action Required</span>`;
+                container.innerHTML = `<span class="kyc-status-banner kyc-pending">⚠️ KYC Required</span>`;
             }
         }
 
         function processKycSubmission() {
             const adhaar = document.getElementById('kycAadhaar').value;
             const pan = document.getElementById('kycPan').value;
-            
-            if(adhaar.length !== 12 || pan.length < 5) {
-                return showGlassToast('Invalid Identity Strings Parameters!', 'error');
-            }
+            if(adhaar.length !== 12 || pan.length < 5) return showGlassToast('Invalid Identity Strings Parameters!', 'error');
             
             let registry = getDB('kyc_registry') || {};
             registry[session.accountNo] = 'VERIFIED';
             setDB('kyc_registry', registry);
-            showGlassToast('🎉 Identity Matrix Verified! All high-value dynamic transaction caps lifted.', 'success');
+            showGlassToast('🎉 Identity Matrix Verified!', 'success');
             refreshDashboard();
         }
 
@@ -237,16 +357,12 @@
         }
 
         function simulateMarketFluctuation() {
-            // Apply a random percentage wave shift dynamic variations toggle
             let btcDelta = (Math.random() * 6 - 3) / 100;
             let ethDelta = (Math.random() * 8 - 4) / 100;
-            
             currentBtcPrice = Math.round(currentBtcPrice * (1 + btcDelta));
             currentEthPrice = Math.round(currentEthPrice * (1 + ethDelta));
-            
             document.getElementById('btcPriceDisplay').innerText = `₹${currentBtcPrice.toLocaleString('en-IN')}`;
             document.getElementById('ethPriceDisplay').innerText = `₹${currentEthPrice.toLocaleString('en-IN')}`;
-            
             showGlassToast('📈 Asset Market price nodes fluctuated dynamically!', 'success');
             updateTradeCalculations();
         }
@@ -255,10 +371,8 @@
             const token = document.getElementById('cryptoTokenSelect').value;
             const action = document.getElementById('cryptoAction').value;
             const qty = parseFloat(document.getElementById('cryptoQty').value);
-            
             let currentPrice = token === 'BTC' ? currentBtcPrice : currentEthPrice;
             let orderCost = qty * currentPrice;
-            
             let wallets = getDB('crypto_wallets') || {};
             if(!wallets[session.accountNo]) wallets[session.accountNo] = { BTC: 0, ETH: 0 };
             
@@ -268,16 +382,13 @@
                     wallets[session.accountNo][token] += qty;
                     setDB('crypto_wallets', wallets);
                     showGlassToast(`🎉 Trade Execution Settled: Bought ${qty} ${token}`, 'success');
-                } else {
-                    showGlassToast(`Order Canceled: ${status.msg}`, 'error');
-                }
+                } else { showGlassToast(`Order Canceled: ${status.msg}`, 'error'); }
             } else if(action === 'SELL') {
-                if(wallets[session.accountNo][token] < qty) return showGlassToast('Asset Liquidation Blocked: Insufficient Tokens!', 'error');
-                
+                if(wallets[session.accountNo][token] < qty) return showGlassToast('Asset Liquidation Blocked!', 'error');
                 updateFakeBalance(session.accountNo, orderCost, 'deposit', `Liquidated crypto asset ${qty} ${token}`);
                 wallets[session.accountNo][token] -= qty;
                 setDB('crypto_wallets', wallets);
-                showGlassToast(`💸 Liquidated successfully: Credited ₹${orderCost} fake cash.`, 'success');
+                showGlassToast(`💸 Liquidated successfully!`, 'success');
             }
             refreshDashboard();
         }
@@ -294,7 +405,6 @@
             const el = document.getElementById('policyCategory');
             const pName = el.value;
             const premium = parseFloat(el.options[el.selectedIndex].getAttribute('data-premium'));
-            
             let status = updateFakeBalance(session.accountNo, premium, 'withdraw', `Initial Premium Settlement Cover: ${pName}`);
             if(status.success) {
                 let policies = getDB('insurance_policies') || {};
@@ -303,34 +413,27 @@
                 setDB('insurance_policies', policies);
                 showGlassToast(`🛡️ ${pName} protection activated safely!`, 'success');
                 refreshDashboard();
-            } else {
-                showGlassToast(`Policy Activation Denied: ${status.msg}`, 'error');
-            }
+            } else { showGlassToast(`Policy Activation Denied: ${status.msg}`, 'error'); }
         }
 
         function renderActivePolicies() {
             let container = document.getElementById('activePoliciesContainer');
             container.innerHTML = '';
             let policies = getDB('insurance_policies')[session.accountNo] || [];
-            
             if(policies.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-style:italic;">No active insurance asset lines.</p>`;
+                container.innerHTML = `<p style="text-align:center; color:#64748b; font-style:italic;">No active insurance asset lines.</p>`;
                 return;
             }
             policies.forEach(p => {
-                container.innerHTML += `
-                    <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.9rem; font-weight:bold; color:var(--primary);">
-                        🛡️ ${p.name} <span style="float:right; color:var(--accent);">₹${p.cost}/Yr Premium</span>
-                    </div>`;
+                container.innerHTML += `<div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.9rem; font-weight:bold; color:var(--primary);">🛡️ ${p.name} <span style="float:right; color:var(--accent);">₹${p.cost}/Yr Premium</span></div>`;
             });
         }
 
-        // Standard Transfer Desk Action Handler
+        // Standard Transfer Desk Action Handlers
         document.getElementById('p2pForm').addEventListener('submit', function(e){
             e.preventDefault();
             const target = document.getElementById('p2pTarget').value.trim();
             const amt = parseFloat(document.getElementById('p2pAmount').value);
-            
             if(target === session.accountNo) return showGlassToast('Cannot wire assets to yourself.', 'error');
             let accounts = getDB('bank_accounts');
             if(!accounts[target]) return showGlassToast('Receiver target profile code not found.', 'error');
@@ -341,23 +444,7 @@
                 showGlassToast('🎉 Remittance assets dispatched successfully!', 'success');
                 this.reset();
                 refreshDashboard();
-            } else {
-                showGlassToast(`Remittance Error: ${status.msg}`, 'error');
-            }
-        });
-
-        // Standard Utility Bill Invoice Handler
-        document.getElementById('billsForm').addEventListener('submit', function(e){
-            e.preventDefault();
-            const amt = parseFloat(document.getElementById('billAmount').value);
-            let res = updateFakeBalance(session.accountNo, amt, 'withdraw', 'Settle Bill Invoice');
-            if(res.success) {
-                showGlassToast('Invoice settled successfully.', 'success');
-                this.reset();
-                refreshDashboard();
-            } else {
-                showGlassToast(res.msg, 'error');
-            }
+            } else { showGlassToast(`Remittance Error: ${status.msg}`, 'error'); }
         });
 
         // Charts & Data Ledger Compiler Matrix
@@ -366,14 +453,12 @@
             tbody.innerHTML = '';
             const history = getDB('tx_history')[session.accountNo] || [];
             let cr = 0, dr = 0;
-
             history.slice().reverse().forEach(tx => {
                 if(tx.type === 'DEPOSIT') cr += tx.amount;
                 if(tx.type === 'WITHDRAW') dr += tx.amount;
                 let c = tx.type === 'DEPOSIT' ? 'color:#10b981; font-weight:bold;' : 'color:#ef4444; font-weight:bold;';
                 tbody.innerHTML += `<tr><td>${tx.date}</td><td>${tx.desc}</td><td style="${c}">${tx.type}</td><td style="${c}">₹${tx.amount}</td><td>₹${tx.refBal.toFixed(2)}</td></tr>`;
             });
-
             const ctx = document.getElementById('analyticsChart').getContext('2d');
             if(chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
