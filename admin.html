@@ -3,108 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Panel - Apex Bank</title>
+    <title>Apex Bank - Executive Admin Control Center</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <div class="logo">Apex Commercial <span>Admin Console</span></div>
-        <button class="btn-danger" onclick="Session.logout()">Logout</button>
+        <div class="logo">Apex Security <span>Master Admin Desk</span></div>
+        <button class="btn-danger" onclick="Session.logout()">Exit Terminal</button>
     </header>
 
     <div class="container">
-        <div style="margin-bottom: 2rem;">
-            <h2>Welcome Back, Master Admin (SOUMYA)</h2>
-            <p style="color: #64748b;">System Administrator Control Dashboard. Manage internal high-level corporate authorizations.</p>
+        <!-- ================= NEW FEATURE: MASTER VAULT LIVE INSIGHTS METRIC TICKER ================= -->
+        <div class="dashboard-grid" style="margin-bottom: 2.5rem;">
+            <div class="glass-panel" style="background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%); color: white; padding: 1.5rem 2rem;">
+                <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; display:block; opacity:0.85;">Total Active Banking Ledgers</span>
+                <h1 style="font-size: 2.5rem; font-weight: 800; margin-top: 5px;" id="adminTotalAccounts">0 Profiles</h1>
+            </div>
+            <div class="glass-panel" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 1.5rem 2rem;">
+                <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; display:block; opacity:0.85;">Master Liquidity Pool Asset Vault</span>
+                <h1 style="font-size: 2.5rem; font-weight: 800; margin-top: 5px; color:#10b981;" id="adminTotalCash">₹0.00</h1>
+            </div>
         </div>
-        
+
         <div class="dashboard-grid">
-            <!-- Left Card: Form to add Managers -->
-            <div class="card" style="background: white;">
-                <h3 style="color: var(--accent); margin-bottom: 1.25rem; font-size: 1.25rem;">Register Branch Manager</h3>
-                <form id="createManagerForm">
-                    <div class="form-group">
-                        <label>Assign Manager ID / Username</label>
-                        <input type="text" id="mngUser" placeholder="e.g. MANAGER_BHUBANESWAR" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Set Secure Password</label>
-                        <input type="password" id="mngPass" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" style="width: 100%; margin-top: 0.5rem;">Create Manager Profile</button>
+            <!-- Executive Management Node Provisions -->
+            <div class="glass-panel">
+                <h3>Authorize Branch Manager Profiles</h3>
+                <form id="addManagerForm">
+                    <div class="form-group"><label>Manager Official Username</label><input type="text" id="mName" required></div>
+                    <div class="form-group"><label>Terminal Password Key</label><input type="password" id="mPass" required></div>
+                    <button type="submit" style="width:100%; background-color:var(--accent);">Register Manager Credentials</button>
                 </form>
             </div>
-            
-            <!-- Right Card: Active Managers list -->
-            <div class="card" style="background: white;">
-                <h3 style="color: var(--primary); margin-bottom: 1.25rem; font-size: 1.25rem;">Authorized Bank Managers</h3>
-                <div style="max-height: 250px; overflow-y: auto;">
-                    <ul id="managerList" style="list-style: none; padding: 0;">
-                        <!-- Content loaded via JavaScript -->
-                    </ul>
-                </div>
+            <div class="glass-panel">
+                <h3>Issued Executive Management Authority Ledger</h3>
+                <ul id="managerList" style="list-style:none;"></ul>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Security Gate: Verify if Admin session is active
-        const sessionData = Session.getUser();
-        if(!sessionData || sessionData.role !== 'admin') {
-            alert('⚠️ Unauthorized Access! Redirecting to Staff Login Portal.');
-            window.location.href = 'employeslogin.html';
+        const staff = Session.getUser();
+        if(!staff || staff.role !== 'admin') window.location.href = 'login.html';
+
+        function computeLiveSystemMetrics() {
+            const accounts = getDB('bank_accounts') || {};
+            const keys = Object.keys(accounts);
+            
+            let aggregatedVaultBalance = 0;
+            keys.forEach(k => {
+                aggregatedVaultBalance += parseFloat(accounts[k].balance || 0);
+            });
+
+            // Set live parameters directly on the top layouts card monitors
+            document.getElementById('adminTotalAccounts').innerText = `${keys.length} Active Accounts`;
+            document.getElementById('adminTotalCash').innerText = `An ₹${aggregatedVaultBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
         }
 
-        // Render registered managers from LocalStorage database
-        function loadManagers() {
-            const listContainer = document.getElementById('managerList');
-            listContainer.innerHTML = '';
+        function renderManagerRegistries() {
+            const list = document.getElementById('managerList');
+            list.innerHTML = '';
             let managers = getDB('managers') || [];
             
             if(managers.length === 0) {
-                listContainer.innerHTML = '<li style="color:#94a3b8; font-style:italic; padding: 10px; text-align:center;">No active branch managers found.</li>';
+                list.innerHTML = `<li style="color:#64748b; font-style:italic;">No corporate managers registered in local system tables.</li>`;
                 return;
             }
-
-            managers.forEach(mgr => {
-                listContainer.innerHTML += `
-                    <li style="background:#f8fafc; padding:12px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span style="display:block; font-size:0.95rem; font-weight:600; color:var(--primary);">💼 ${mgr.id}</span>
-                            <span style="font-size:0.8rem; color:#94a3b8;">Role: Branch Manager</span>
-                        </div>
-                        <span class="badge badge-approved" style="font-size:0.75rem;">Active Status</span>
-                    </li>`;
+            managers.forEach((m, index) => {
+                list.innerHTML += `<li><span>👤 ${m.user}</span><button class="btn-danger" style="padding:2px 8px; font-size:0.75rem;" onclick="removeManager(${index})">Revoke Access</button></li>`;
             });
         }
 
-        // Handle Manager Creation
-        document.getElementById('createManagerForm').addEventListener('submit', function(e) {
+        document.getElementById('addManagerForm').addEventListener('submit', function(e){
             e.preventDefault();
-            let newId = document.getElementById('mngUser').value.trim();
-            let newPass = document.getElementById('mngPass').value;
-            
-            let currentManagers = getDB('managers') || [];
-            
-            // Check for duplicate username
-            if(currentManagers.some(mgr => mgr.id.toLowerCase() === newId.toLowerCase())) {
-                alert('⚠️ Verification Failed: This Manager ID already exists in the system.');
-                return;
-            }
-            
-            // Push into array database
-            currentManagers.push({ id: newId, pass: newPass });
-            setDB('managers', currentManagers);
-            
-            alert(`🎉 Success: Manager Account [ ${newId} ] created successfully!`);
+            const user = document.getElementById('mName').value.trim();
+            const pass = document.getElementById('mPass').value;
+            let managers = getDB('managers') || [];
+            managers.push({ user: user, pass: pass, role: 'manager' });
+            setDB('managers', managers);
+            showGlassToast('Manager profile index authorized successfully.', 'success');
             this.reset();
-            loadManagers();
+            renderManagerRegistries();
         });
 
-        // Initial Data Fetch
-        loadManagers();
+        window.removeManager = function(idx) {
+            let m = getDB('managers') || []; m.splice(idx, 1); setDB('managers', m);
+            showGlassToast('Access key revoked.', 'success'); renderManagerRegistries();
+        };
+
+        // Run monitors updates dynamically on loop load
+        computeLiveSystemMetrics();
+        renderManagerRegistries();
     </script>
 </body>
 </html>

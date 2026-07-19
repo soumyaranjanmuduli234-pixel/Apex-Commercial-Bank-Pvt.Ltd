@@ -14,14 +14,13 @@
     </header>
 
     <div class="container">
-        <!-- Dashboard Segment Navigation Controls -->
         <div class="tab-container">
             <button class="tab-btn active-tab" onclick="switchManagerTab('accounts-panel', this)">👤 Account Management</button>
-            <button class="tab-btn" onclick="switchManagerTab('loans-panel', this)">🏦 Dynamic Loan Audits</button>
-            <button class="tab-btn" onclick="switchManagerTab('cards-panel', this)">💳 Card Issuance verification</button>
+            <button class="tab-btn" onclick="switchManagerTab('loans-panel', this)">🏦 Advanced Loan Audits Portal</button>
+            <button class="tab-btn" onclick="switchManagerTab('cards-panel', this)">💳 Card Issuance Verification</button>
         </div>
 
-        <!-- ================= SEGMENT 1: PROFILE CREATION & LEDGER CHECK ================= -->
+        <!-- ================= SEGMENT 1: PROFILE MANAGEMENT ================= -->
         <div id="accounts-panel" class="tab-panel active-panel">
             <div class="dashboard-grid">
                 <div class="glass-panel">
@@ -46,21 +45,31 @@
             </div>
         </div>
 
-        <!-- ================= SEGMENT 2: CAR, HOME & STUDY LOAN VERIFICATION TERMINAL ================= -->
+        <!-- ================= SEGMENT 2: EXPANDED FULL LEDGER LOAN DOSSIER AUDIT ================= -->
         <div id="loans-panel" class="tab-panel">
             <div class="glass-panel">
-                <h3>System Core Loan Verification Desk</h3>
-                <p style="font-size:0.85rem; margin-bottom:1rem; color:#64748b;">Processes dynamic portfolios matching Car Loans, Home Structural Loans, or Study Allocation metrics.</p>
+                <h3>System Advanced Loan Verification Dossier Audit Desk</h3>
+                <p style="font-size:0.85rem; margin-bottom:1rem; color:#64748b;">Reviews granular verification arrays including assigned Nominees details and strict 9.5% Fixed APR configurations.</p>
                 <div style="overflow-x:auto;">
-                    <table>
-                        <thead><tr><th>A/C Target</th><th>Loan Category</th><th>Amount Requested</th><th>Status Matrix</th><th>Actions Dispatch</th></tr></thead>
+                    <table style="min-width: 1000px;">
+                        <thead>
+                            <tr>
+                                <th>Applicant Profile Info</th>
+                                <th>Identity Credentials</th>
+                                <th>Nominee Target</th>
+                                <th>Loan Class & Term</th>
+                                <th>Principal Amount</th>
+                                <th>Status Matrix</th>
+                                <th>Actions Control</th>
+                            </tr>
+                        </thead>
                         <tbody id="managerLoansTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ================= SEGMENT 3: DEBIT & CREDIT CARD PROVISIONING MATRIX ================= -->
+        <!-- ================= SEGMENT 3: CARD PROVISIONING ================= -->
         <div id="cards-panel" class="tab-panel">
             <div class="glass-panel">
                 <h3>Card Request Approval & Ledger Verification Node</h3>
@@ -88,7 +97,6 @@
         }
 
         function renderManagerConsole() {
-            // Render Profile Listings
             const accounts = getDB('bank_accounts') || {};
             const kyc = getDB('kyc_registry') || {};
             const accBody = document.getElementById('managerAccountsTableBody');
@@ -100,89 +108,79 @@
                 accBody.innerHTML += `<tr><td>#${num}</td><td>${accounts[num].name}</td><td>₹${accounts[num].balance.toLocaleString()}</td><td style="color:${color}; font-weight:bold;">${status}</td></tr>`;
             });
 
-            // Render Dynamic Loans Pipeline (Car / Home / Study)
+            // Rebuilt Loop to read and show advanced granular custom loan dossier profiles
             const loans = getDB('loans') || [];
             const loanBody = document.getElementById('managerLoansTableBody');
             loanBody.innerHTML = '';
             
             if(loans.length === 0) {
-                loanBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No loan ledger streams active.</td></tr>`;
+                loanBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b; padding:2rem;">No advanced loan dossier files filed.</td></tr>`;
             } else {
                 loans.forEach((l, index) => {
-                    let actions = l.status === 'PENDING' ? `
-                        <button class="btn-success" style="padding:4px 8px; font-size:0.8rem;" onclick="evaluateLoan(${index}, 'APPROVED')">Approve</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="evaluateLoan(${index}, 'REJECTED')">Reject</button>
-                    ` : `<span style="color:#64748b; font-weight:bold;">Processed</span>`;
+                    let actionControls = l.status === 'PENDING' ? `
+                        <button class="btn-success" style="padding:4px 6px; font-size:0.8rem; margin-bottom:4px; width:100%;" onclick="evaluateLoan(${index}, 'APPROVED')">Approve</button>
+                        <button class="btn-danger" style="padding:4px 6px; font-size:0.8rem; width:100%;" onclick="evaluateLoan(${index}, 'REJECTED')">Reject</button>
+                    ` : `<span style="color:#64748b; font-weight:bold; font-size:0.85rem;">Audit Complete</span>`;
+
+                    let infoCluster = `<strong>${l.name}</strong><br><span style="font-size:0.75rem; color:#64748b;">A/C: #${l.accountNo}<br>Em: ${l.email || 'N/A'}<br>Ph: ${l.mobile || 'N/A'}</span>`;
+                    let identityCluster = `<span style="font-size:0.8rem; font-family:monospace;">UID: ${l.aadhaar || 'N/A'}<br>PAN: ${l.pan || 'N/A'}</span>`;
                     
-                    loanBody.innerHTML += `<tr><td>#${l.accountNo}</td><td><strong>${l.type}</strong></td><td>₹${l.amount.toLocaleString()}</td><td>${l.status}</td><td>${actions}</td></tr>`;
+                    loanBody.innerHTML += `
+                        <tr>
+                            <td>${infoCluster}</td>
+                            <td>${identityCluster}</td>
+                            <td><strong>${l.nominee || 'N/A'}</strong></td>
+                            <td><span style="color:var(--accent); font-weight:bold;">${l.type}</span><br><span style="font-size:0.75rem; color:#64748b;">Term: ${l.tenure || 'N/A'}</span></td>
+                            <td><strong style="color:var(--primary);">₹${parseFloat(l.amount).toLocaleString()}</strong><br><span style="font-size:0.75rem; color:#10b981;">Rate: 9.5%</span></td>
+                            <td><span style="font-weight:bold; font-size:0.85rem;">${l.status}</span></td>
+                            <td>${actionControls}</td>
+                        </tr>`;
                 });
             }
 
-            // Render Credit/Debit Instrumentation Desk
+            // Cards Desk
             const cards = getDB('cards') || [];
             const cardBody = document.getElementById('managerCardsTableBody');
             cardBody.innerHTML = '';
-            
             if(cards.length === 0) {
-                cardBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No credit/debit instruments requested.</td></tr>`;
+                cardBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No instrument requests.</td></tr>`;
             } else {
                 cards.forEach((c, index) => {
-                    cardBody.innerHTML += `
-                        <tr>
-                            <td>#${c.accountNo}</td>
-                            <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold;">${c.type}</span></td>
-                            <td>₹${c.limit.toLocaleString()}</td>
-                            <td><span style="color:#10b981; font-weight:bold;">● ${c.status}</span></td>
-                            <td><button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="revokeCard(${index})">Revoke Instrument</button></td>
-                        </tr>`;
+                    cardBody.innerHTML += `<tr><td>#${c.accountNo}</td><td><strong>${c.type}</strong></td><td>₹${c.limit.toLocaleString()}</td><td>${c.status}</td><td><button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="revokeCard(${index})">Revoke</button></td></tr>`;
                 });
             }
         }
 
-        // Action Processor Forms Nodes
         document.getElementById('createAccountForm').addEventListener('submit', function(e){
             e.preventDefault();
             const name = document.getElementById('custName').value.trim();
             const num = document.getElementById('custAccNo').value.trim();
             const bal = parseFloat(document.getElementById('custBal').value);
             const pass = document.getElementById('custPass').value;
-
             let accounts = getDB('bank_accounts') || {};
-            if(accounts[num]) return showGlassToast('Account index conflict: Number already active!', 'error');
-
-            accounts[num] = { name: name, balance: bal, password: pass };
-            setDB('bank_accounts', accounts);
-            
-            // Trigger automatic entry into transaction registry tracking matrix
+            if(accounts[num]) return showGlassToast('Account already active!', 'error');
+            accounts[num] = { name: name, balance: bal, password: pass }; setDB('bank_accounts', accounts);
             let txHistory = getDB('tx_history') || {};
-            txHistory[num] = [{ date: new Date().toLocaleString(), type: 'DEPOSIT', amount: bal, desc: 'Initial Balance Account Capitalization', refBal: bal }];
+            txHistory[num] = [{ date: new Date().toLocaleString(), type: 'DEPOSIT', amount: bal, desc: 'Initial Ledger Setup', refBal: bal }];
             setDB('tx_history', txHistory);
-
-            showGlassToast(`🎉 Customer profile node #${num} compiled into system registry!`, 'success');
-            this.reset();
-            renderManagerConsole();
+            showGlassToast(`🎉 Profile node #${num} compiled!`, 'success'); this.reset(); renderManagerConsole();
         });
 
         function evaluateLoan(index, resolution) {
             let loans = getDB('loans') || [];
-            let targetLoan = loans[index];
-            targetLoan.status = resolution;
-            
+            let target = loans[index];
+            target.status = resolution;
             if(resolution === 'APPROVED') {
-                updateFakeBalance(targetLoan.accountNo, targetLoan.amount, 'deposit', `Disbursed Principal: ${targetLoan.type}`);
+                updateFakeBalance(target.accountNo, target.amount, 'deposit', `Disbursed Sanction: ${target.type} (Fixed 9.5% APR)`);
             }
-            
             setDB('loans', loans);
-            showGlassToast(`💼 Loan entry modified state to: ${resolution}`, 'success');
+            showGlassToast(`💼 Loan entry status changed to: ${resolution}`, 'success');
             renderManagerConsole();
         }
 
         function revokeCard(index) {
-            let cards = getDB('cards') || [];
-            cards.splice(index, 1);
-            setDB('cards', cards);
-            showGlassToast('💳 Financial asset card instrument successfully revoked from profile ledger.', 'success');
-            renderManagerConsole();
+            let cards = getDB('cards') || []; cards.splice(index, 1); setDB('cards', cards);
+            showGlassToast('💳 Card revoked successfully.', 'success'); renderManagerConsole();
         }
 
         renderManagerConsole();

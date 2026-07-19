@@ -33,12 +33,11 @@
             </div>
         </div>
 
-        <!-- System Architecture Master Section Navigation Tabs -->
         <div class="tab-container">
             <button class="tab-btn active-tab" onclick="switchTab('analytics-section', this)">📊 Statements</button>
             <button class="tab-btn" onclick="switchTab('cash-section', this)">💰 Deposit/Withdraw</button>
             <button class="tab-btn" onclick="switchTab('transfer-section', this)">💸 Transfers & Cards</button>
-            <button class="tab-btn" onclick="switchTab('loan-section', this)">🏦 Loans Portal</button>
+            <button class="tab-btn" onclick="switchTab('loan-section', this)">🏦 Advanced Loans Desk</button>
             <button class="tab-btn" onclick="switchTab('crypto-section', this)">🪙 Crypto & Trading</button>
             <button class="tab-btn" onclick="switchTab('insurance-section', this)">🛡️ Policies</button>
             <button class="tab-btn" onclick="switchTab('kyc-section', this)">👤 Profile KYC</button>
@@ -104,25 +103,50 @@
             </div>
         </div>
 
-        <!-- ================= PANEL 4: TRIPLE LOAN MATRIX PLATFORM ================= -->
+        <!-- ================= PANEL 4: TRIPLE LOAN MATRIX PLATFORM WITH EXTENDED DOSSIER ================= -->
         <div id="loan-section" class="tab-panel">
             <div class="dashboard-grid">
-                <div class="glass-panel">
-                    <h3>Loan Request Generation System</h3>
-                    <div class="form-group">
-                        <label>Loan Sub-Category Profile</label>
-                        <select id="loanTypeSelect">
-                            <option value="Car Loan">Car Loan Portfolio</option>
-                            <option value="Home Loan">Home Loan Infrastructure</option>
-                            <option value="Study Loan">Study Loan (Education Asset)</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Requested Principal Amount</label><input type="number" id="loanAmtInput" value="50000"></div>
-                    <button type="button" style="width:100%; background-color:#d97706;" onclick="submitLoanApplication()">File Loan Document Dossier</button>
+                <div class="glass-panel" style="grid-column: span 1;">
+                    <h3>Comprehensive Loan Verification File</h3>
+                    <form id="comprehensiveLoanForm">
+                        <div class="form-group">
+                            <label>Loan Sub-Category Profile</label>
+                            <select id="lnCategory">
+                                <option value="Car Loan">Car Loan Portfolio</option>
+                                <option value="Home Loan">Home Loan Infrastructure</option>
+                                <option value="Study Loan">Study Loan (Education Asset)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Applicant Name (Auto)</label><input type="text" id="lnApplicantName" readonly></div>
+                        <div class="form-group"><label>Account Number (Auto)</label><input type="text" id="lnAccNo" readonly></div>
+                        <div class="form-group"><label>Registered Email ID</label><input type="email" id="lnEmail" placeholder="name@domain.com" required></div>
+                        <div class="form-group"><label>Mobile Number</label><input type="text" id="lnMobile" placeholder="10 Digits" required></div>
+                        <div class="form-group"><label>Aadhaar Reference String</label><input type="text" id="lnAadhaar" placeholder="12 Digits" required></div>
+                        <div class="form-group"><label>PAN Alpha-Numeric Code</label><input type="text" id="lnPan" placeholder="ABCDE1234F" required></div>
+                        <div class="form-group"><label>Nominee Full Legal Name</label><input type="text" id="lnNominee" placeholder="Nominee Name" required></div>
+                        <div class="form-group"><label>Required Funding Value (Fake INR)</label><input type="number" id="lnPrincipal" placeholder="₹ Value" required></div>
+                        <div class="form-group">
+                            <label>Tenure Framework Duration</label>
+                            <select id="lnTenure">
+                                <option value="2 Years">2 Years Dynamic Term</option>
+                                <option value="3 Years">3 Years Dynamic Term</option>
+                                <option value="4 Years">4 Years Dynamic Term</option>
+                                <option value="5 Years">5 Years Dynamic Term</option>
+                                <option value="6 Years">6 Years Dynamic Term</option>
+                                <option value="7 Years">7 Years Dynamic Term</option>
+                                <option value="8 Years">8 Years Dynamic Term (Maximum Capped)</option>
+                            </select>
+                        </div>
+                        <div style="background: #eff6ff; padding: 10px; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem; font-weight: bold; color: #1d4ed8; text-align: center;">
+                            ⚠️ Dynamic Interest Applied Rate: 9.5% Fixed P.A.
+                        </div>
+                        <button type="submit" style="width:100%; background-color:#d97706;">Submit Verified Loan File</button>
+                    </form>
                 </div>
                 <div class="glass-panel">
-                    <h3>Active Loan Registry Tracking</h3>
-                    <div id="loanStatusDisplayContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+                    <h3>Active Loan Registry Tracking & Legal PDF Contracts</h3>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Once authorized by the management console desk, execution contracts can be printed directly via PDF downloads.</p>
+                    <div id="loanStatusDisplayContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
             </div>
         </div>
@@ -230,8 +254,11 @@
             
             document.getElementById('welcomeUser').innerText = `👤 ${session.user}`;
             document.getElementById('accName').innerText = user.name;
-            document.getElementById('accNum').innerText = `Apex Savings Profile Account: # ${session.accountNo}`;
+            document.getElementById('accNum').innerText = `Apex Profile: # ${session.accountNo}`;
             document.getElementById('accBal').innerText = `₹${parseFloat(user.balance).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+
+            document.getElementById('lnApplicantName').value = user.name;
+            document.getElementById('lnAccNo').value = session.accountNo;
 
             renderKycStatusBadge();
             renderPassbookAndChart();
@@ -242,38 +269,26 @@
             updateTradeCalculations();
         }
 
-        // Cash Ledger Deposits/Withdrawals Engines Matrix 
+        // Cash Ledger Operations
         function handleCashOperation(type) {
             const amtId = type === 'deposit' ? 'cashDepositAmt' : 'cashWithdrawAmt';
             const amt = parseFloat(document.getElementById(amtId).value);
             const desc = type === 'deposit' ? 'Simulated Cash Vault Deposit' : 'ATM Self Cash Withdrawal';
-            
             let status = updateFakeBalance(session.accountNo, amt, type, desc);
             if(status.success) {
-                showGlassToast(`🎉 Asset Transaction Logged: ${type.toUpperCase()} of ₹${amt} compiled!`, 'success');
+                showGlassToast(`🎉 Transaction Successful: ${type.toUpperCase()} complete.`, 'success');
                 refreshDashboard();
-            } else {
-                showGlassToast(status.msg, 'error');
-            }
+            } else { showGlassToast(status.msg, 'error'); }
         }
 
-        // Card Deployment Node Framework
+        // Card Engine
         function applyCard(cardType) {
             let cards = getDB('cards') || [];
             let checkExisting = cards.find(c => c.accountNo === session.accountNo && c.type === cardType);
-            
-            if(checkExisting) {
-                return showGlassToast(`💳 Active Card Balance/Limit Profile: ₹${checkExisting.limit.toLocaleString()}`, 'success');
-            }
-            
-            cards.push({
-                accountNo: session.accountNo,
-                type: cardType,
-                status: 'APPROVED',
-                limit: cardType === 'DEBIT' ? 50000 : 150000
-            });
+            if(checkExisting) return showGlassToast(`💳 Active Limit Profile Balance: ₹${checkExisting.limit.toLocaleString()}`, 'success');
+            cards.push({ accountNo: session.accountNo, type: cardType, status: 'APPROVED', limit: cardType === 'DEBIT' ? 50000 : 150000 });
             setDB('cards', cards);
-            showGlassToast(`🎉 ${cardType} Asset Instrument Generated instantly! Balance sync compiled.`, 'success');
+            showGlassToast(`🎉 Virtual ${cardType} instrument linked!`, 'success');
             refreshDashboard();
         }
 
@@ -281,121 +296,170 @@
             let cards = getDB('cards') || [];
             let deb = cards.find(c => c.accountNo === session.accountNo && c.type === 'DEBIT');
             let crd = cards.find(c => c.accountNo === session.accountNo && c.type === 'CREDIT');
-            
-            document.getElementById('debitCardStatus').innerHTML = deb ? `<span style="color:#10b981; font-weight:bold;">Active (Lim: ₹${deb.limit})</span>` : 'Not Issued';
-            document.getElementById('creditCardStatus').innerHTML = crd ? `<span style="color:#10b981; font-weight:bold;">Active (Lim: ₹${crd.limit})</span>` : 'Not Issued';
+            document.getElementById('debitCardStatus').innerHTML = deb ? `<span style="color:#10b981; font-weight:bold;">Active (₹${deb.limit})</span>` : 'Not Issued';
+            document.getElementById('creditCardStatus').innerHTML = crd ? `<span style="color:#10b981; font-weight:bold;">Active (₹${crd.limit})</span>` : 'Not Issued';
         }
 
-        // Structural Loan Core Engine
-        function submitLoanApplication() {
-            const type = document.getElementById('loanTypeSelect').value;
-            const amt = parseFloat(document.getElementById('loanAmtInput').value);
-            
+        // Advanced Nominee Dynamic Loan Submit Core Engine
+        document.getElementById('comprehensiveLoanForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const category = document.getElementById('lnCategory').value;
+            const email = document.getElementById('lnEmail').value;
+            const mobile = document.getElementById('lnMobile').value;
+            const aadhaar = document.getElementById('lnAadhaar').value;
+            const pan = document.getElementById('lnPan').value;
+            const nominee = document.getElementById('lnNominee').value;
+            const principal = parseFloat(document.getElementById('lnPrincipal').value);
+            const tenure = document.getElementById('lnTenure').value;
+
             let loans = getDB('loans') || [];
             loans.push({
                 accountNo: session.accountNo,
-                type: type,
-                amount: amt,
+                name: document.getElementById('lnApplicantName').value,
+                type: category,
+                amount: principal,
+                tenure: tenure,
+                email: email,
+                mobile: mobile,
+                aadhaar: aadhaar,
+                pan: pan,
+                nominee: nominee,
+                rate: "9.5%",
                 status: 'PENDING',
                 date: new Date().toLocaleDateString()
             });
+
             setDB('loans', loans);
-            showGlassToast('🚀 Loan Matrix Ledger registered. Awaiting Manager evaluation node.', 'success');
+            showGlassToast('🚀 Comprehensive loan dossier filed to Management desk!', 'success');
+            this.reset();
             refreshDashboard();
-        }
+        });
 
         function renderLoanStatus() {
             let container = document.getElementById('loanStatusDisplayContainer');
             container.innerHTML = '';
             let loans = getDB('loans') || [];
             let userLoans = loans.filter(l => l.accountNo === session.accountNo);
-            
+
             if(userLoans.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:#64748b; font-style:italic;">No active loan ledger logs found.</p>`;
+                container.innerHTML = `<p style="text-align:center; color:#64748b; font-style:italic;">No active loan ledger dossiers detected.</p>`;
                 return;
             }
-            userLoans.forEach(l => {
-                let col = l.status === 'APPROVED' ? '#10b981' : (l.status === 'REJECTED' ? '#ef4444' : '#d97706');
+
+            userLoans.forEach((l, idx) => {
+                let badgeColor = l.status === 'APPROVED' ? '#10b981' : (l.status === 'REJECTED' ? '#ef4444' : '#d97706');
+                let pdfButton = l.status === 'APPROVED' ? `
+                    <button class="btn-success" style="width:100%; margin-top:8px; padding:4px; font-size:0.75rem;" onclick="downloadLegalLoanContract(${idx})">
+                        📜 Download Thank You Contract PDF
+                    </button>
+                ` : '';
+
                 container.innerHTML += `
-                    <div style="background:#f8fafc; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.9rem;">
-                        <strong>${l.type}:</strong> ₹${l.amount.toLocaleString()} 
-                        <span style="float:right; color:${col}; font-weight:bold;">● ${l.status}</span>
+                    <div style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:6px; font-size:0.88rem;">
+                        <strong>${l.type}:</strong> ₹${l.amount.toLocaleString()} <br>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">Nominee: ${l.nominee} | Term: ${l.tenure}</span>
+                        <span style="float:right; color:${badgeColor}; font-weight:bold;">● ${l.status}</span>
+                        ${pdfButton}
                     </div>`;
             });
         }
 
-        // KYC Management Operations Logic
+        // Download Dedicated Automated Thank You & Loan Summary Contract PDF
+        window.downloadLegalLoanContract = function(userIndex) {
+            let loans = getDB('loans') || [];
+            let userLoans = loans.filter(l => l.accountNo === session.accountNo);
+            let data = userLoans[userIndex];
+
+            if(!data) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header Certificate Design
+            doc.setFillColor(15, 23, 42); doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFontSize(20); doc.text("APEX COMMERCIAL BANK LTD.", 15, 25);
+            doc.setFontSize(10); doc.text("Simulated Legal Credit Issuance Clearance Contract", 15, 33);
+            
+            // Core Legal Data Table Grid Compilation
+            doc.setTextColor(30, 41, 59); doc.setFontSize(14); doc.text("THANK YOU - CAPITAL LOAN SANCTION DISPATCH", 15, 55);
+            
+            let summaryRows = [
+                ["Verification Parameter Link", "Authorized File Value Matrix Data"],
+                ["Primary Account ID", `# ${data.accountNo}`],
+                ["Borrower Profile Name", data.name],
+                ["Registered Contact Number", data.mobile],
+                ["Sanctioned Capital Category", data.type],
+                ["Approved Principal Amount", `INR ${parseFloat(data.amount).toLocaleString('en-IN')}.00`],
+                ["Allocated Term Horizon", data.tenure],
+                ["Fixed Interest Metrics Rate", "9.5% Per Annum Fixed"],
+                ["Assigned Legal Nominee Name", data.nominee],
+                ["Verification Dossier State", "APPROVED BY BRANCH MANAGER MANAGEMENT DESK"]
+            ];
+
+            doc.autoTable({
+                startY: 65,
+                body: summaryRows,
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235] }
+            });
+
+            doc.save(`LoanSanction_Contract_${data.accountNo}.pdf`);
+            showGlassToast('📜 Legal Loan Sanction Contract Sheet PDF Dispatched!', 'success');
+        };
+
+        // KYC Verification Matrix
         function renderKycStatusBadge() {
             let kyc = getDB('kyc_registry') || {};
             let status = kyc[session.accountNo] || 'PENDING';
             let container = document.getElementById('kycBadgeContainer');
-            if(status === 'VERIFIED') {
-                container.innerHTML = `<span class="kyc-status-banner kyc-verified">✓ KYC Verified</span>`;
-            } else {
-                container.innerHTML = `<span class="kyc-status-banner kyc-pending">⚠️ KYC Required</span>`;
-            }
+            container.innerHTML = status === 'VERIFIED' ? `<span class="kyc-status-banner kyc-verified">✓ KYC Verified</span>` : `<span class="kyc-status-banner kyc-pending">⚠️ KYC Required</span>`;
         }
 
         function processKycSubmission() {
             const adhaar = document.getElementById('kycAadhaar').value;
             const pan = document.getElementById('kycPan').value;
             if(adhaar.length !== 12 || pan.length < 5) return showGlassToast('Invalid Identity Strings Parameters!', 'error');
-            
             let registry = getDB('kyc_registry') || {};
-            registry[session.accountNo] = 'VERIFIED';
-            setDB('kyc_registry', registry);
-            showGlassToast('🎉 Identity Matrix Verified!', 'success');
-            refreshDashboard();
+            registry[session.accountNo] = 'VERIFIED'; setDB('kyc_registry', registry);
+            showGlassToast('🎉 Identity Matrix Verified!', 'success'); refreshDashboard();
         }
 
-        // Crypto Brokerage Infrastructure Operations Logic
+        // Crypto Brokerage
         function updateTradeCalculations() {
             const select = document.getElementById('cryptoTokenSelect');
             const qty = parseFloat(document.getElementById('cryptoQty').value) || 0;
-            let currentPrice = select.value === 'BTC' ? currentBtcPrice : currentEthPrice;
-            document.getElementById('cryptoCalcVal').innerText = `₹${(qty * currentPrice).toLocaleString('en-IN')}`;
+            let p = select.value === 'BTC' ? currentBtcPrice : currentEthPrice;
+            document.getElementById('cryptoCalcVal').innerText = `₹${(qty * p).toLocaleString('en-IN')}`;
         }
 
         function simulateMarketFluctuation() {
-            let btcDelta = (Math.random() * 6 - 3) / 100;
-            let ethDelta = (Math.random() * 8 - 4) / 100;
-            currentBtcPrice = Math.round(currentBtcPrice * (1 + btcDelta));
-            currentEthPrice = Math.round(currentEthPrice * (1 + ethDelta));
+            currentBtcPrice = Math.round(currentBtcPrice * (1 + (Math.random() * 6 - 3)/100));
+            currentEthPrice = Math.round(currentEthPrice * (1 + (Math.random() * 8 - 4)/100));
             document.getElementById('btcPriceDisplay').innerText = `₹${currentBtcPrice.toLocaleString('en-IN')}`;
             document.getElementById('ethPriceDisplay').innerText = `₹${currentEthPrice.toLocaleString('en-IN')}`;
-            showGlassToast('📈 Asset Market price nodes fluctuated dynamically!', 'success');
-            updateTradeCalculations();
+            showGlassToast('📈 Crypto rates fluctuated!', 'success'); updateTradeCalculations();
         }
 
         function executeCryptoOrder() {
             const token = document.getElementById('cryptoTokenSelect').value;
             const action = document.getElementById('cryptoAction').value;
             const qty = parseFloat(document.getElementById('cryptoQty').value);
-            let currentPrice = token === 'BTC' ? currentBtcPrice : currentEthPrice;
-            let orderCost = qty * currentPrice;
-            let wallets = getDB('crypto_wallets') || {};
-            if(!wallets[session.accountNo]) wallets[session.accountNo] = { BTC: 0, ETH: 0 };
-            
+            let cost = qty * (token === 'BTC' ? currentBtcPrice : currentEthPrice);
+            let wallets = getDB('crypto_wallets') || {}; if(!wallets[session.accountNo]) wallets[session.accountNo] = { BTC: 0, ETH: 0 };
             if(action === 'BUY') {
-                let status = updateFakeBalance(session.accountNo, orderCost, 'withdraw', `Acquired crypto token asset ${qty} ${token}`);
-                if(status.success) {
-                    wallets[session.accountNo][token] += qty;
-                    setDB('crypto_wallets', wallets);
-                    showGlassToast(`🎉 Trade Execution Settled: Bought ${qty} ${token}`, 'success');
-                } else { showGlassToast(`Order Canceled: ${status.msg}`, 'error'); }
-            } else if(action === 'SELL') {
-                if(wallets[session.accountNo][token] < qty) return showGlassToast('Asset Liquidation Blocked!', 'error');
-                updateFakeBalance(session.accountNo, orderCost, 'deposit', `Liquidated crypto asset ${qty} ${token}`);
-                wallets[session.accountNo][token] -= qty;
-                setDB('crypto_wallets', wallets);
-                showGlassToast(`💸 Liquidated successfully!`, 'success');
+                if(updateFakeBalance(session.accountNo, cost, 'withdraw', `Acquired ${qty} ${token}`).success) {
+                    wallets[session.accountNo][token] += qty; setDB('crypto_wallets', wallets); showGlassToast('🎉 Bought Token!', 'success');
+                } else { showGlassToast('Insufficient Balance!', 'error'); }
+            } else {
+                if(wallets[session.accountNo][token] < qty) return showGlassToast('Insufficient Tokens!', 'error');
+                updateFakeBalance(session.accountNo, cost, 'deposit', `Liquidated ${qty} ${token}`);
+                wallets[session.accountNo][token] -= qty; setDB('crypto_wallets', wallets); showGlassToast('💸 Liquidated!', 'success');
             }
             refreshDashboard();
         }
 
         function renderCryptoWallet() {
-            let wallets = getDB('crypto_wallets') || {};
-            let w = wallets[session.accountNo] || { BTC: 0, ETH: 0 };
+            let w = getDB('crypto_wallets')[session.accountNo] || { BTC: 0, ETH: 0 };
             document.getElementById('ownedBtc').innerText = `${w.BTC.toFixed(3)} BTC`;
             document.getElementById('ownedEth').innerText = `${w.ETH.toFixed(3)} ETH`;
         }
@@ -429,28 +493,31 @@
             });
         }
 
-        // Standard Transfer Desk Action Handlers
+        // P2P Core
         document.getElementById('p2pForm').addEventListener('submit', function(e){
             e.preventDefault();
             const target = document.getElementById('p2pTarget').value.trim();
             const amt = parseFloat(document.getElementById('p2pAmount').value);
             if(target === session.accountNo) return showGlassToast('Cannot wire assets to yourself.', 'error');
-            let accounts = getDB('bank_accounts');
-            if(!accounts[target]) return showGlassToast('Receiver target profile code not found.', 'error');
-
-            let status = updateFakeBalance(session.accountNo, amt, 'withdraw', `Wire Transfer to A/C ${target}`);
-            if(status.success) {
+            if(!getDB('bank_accounts')[target]) return showGlassToast('Receiver target profile code not found.', 'error');
+            if(updateFakeBalance(session.accountNo, amt, 'withdraw', `Wire Transfer to A/C ${target}`).success) {
                 updateFakeBalance(target, amt, 'deposit', `Received Wire from A/C ${session.accountNo}`);
-                showGlassToast('🎉 Remittance assets dispatched successfully!', 'success');
-                this.reset();
-                refreshDashboard();
-            } else { showGlassToast(`Remittance Error: ${status.msg}`, 'error'); }
+                showGlassToast('🎉 Remittance assets dispatched!', 'success'); this.reset(); refreshDashboard();
+            } else { showGlassToast('Transfer Error!', 'error'); }
         });
 
-        // Charts & Data Ledger Compiler Matrix
+        // Bills
+        document.getElementById('billsForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('billAmount').value);
+            if(updateFakeBalance(session.accountNo, amt, 'withdraw', 'Settle Bill Invoice').success) {
+                showGlassToast('Invoice settled successfully.', 'success'); this.reset(); refreshDashboard();
+            } else { showGlassToast('Insufficient Balance!', 'error'); }
+        });
+
+        // Charts Matrix
         function renderPassbookAndChart() {
-            const tbody = document.getElementById('passbookBody');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('passbookBody'); tbody.innerHTML = '';
             const history = getDB('tx_history')[session.accountNo] || [];
             let cr = 0, dr = 0;
             history.slice().reverse().forEach(tx => {
@@ -469,15 +536,13 @@
         }
 
         function generateStatementPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const history = getDB('tx_history')[session.accountNo] || [];
             doc.setFillColor(15, 23, 42); doc.rect(0, 0, 210, 30, 'F');
             doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text("APEX COMMERCIAL BANK STATEMENT", 15, 20);
             let rows = history.map(tx => [tx.date, tx.desc, tx.type, `INR ${tx.amount}`, `INR ${tx.refBal.toFixed(2)}`]);
             doc.autoTable({ startY: 40, head: [['Date', 'Description', 'Type', 'Amount', 'Balance']], body: rows });
             doc.save(`Statement_${session.accountNo}.pdf`);
-            showGlassToast('PDF Document statement saved successfully.', 'success');
         }
 
         refreshDashboard();
